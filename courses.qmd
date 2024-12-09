@@ -1,0 +1,13 @@
+--- 
+title: Relevant Courses Taken
+
+---
+All classes are introductory classes
+
+- Bootstrapping
+- Monte Carlo Methods
+- Data Mining
+- Machine Learning Models
+- Statistical Modeling
+- Statistical Principles
+- Advanced Probability and Statistics

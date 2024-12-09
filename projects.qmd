@@ -1,0 +1,22 @@
+---
+toc: false
+listing: 
+  - id: project-listing
+    contents:
+      - "/projects/*.qmd"
+    sort: false
+    sort-ui: false 
+    filter-ui: true
+    type: table
+    fields: 
+      - title
+      - image
+      - subtitle
+    categories: false
+
+---
+
+:::project-listing
+:::
+
+

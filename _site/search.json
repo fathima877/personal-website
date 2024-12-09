@@ -9,8 +9,190 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "personal-website",
+    "title": "Fathima Shaikh",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 3\n\n[1] 4"
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all the required courses for the major, and the relavent courses can be viewed in “Courses”. Additionally, She has diverse internship experiences which can be viewed in “CV”. Lastly, she has a strong interest in creating statistical and machine learning models, which can be viewed in “Projects”."
+  },
+  {
+    "objectID": "index.html#education",
+    "href": "index.html#education",
+    "title": "Fathima Shaikh",
+    "section": "Education",
+    "text": "Education\nUniversity of California, Los Angeles | B.S in Statistics and Data Science | Sept 2021 - June 2025"
+  },
+  {
+    "objectID": "index.html#experience",
+    "href": "index.html#experience",
+    "title": "Fathima Shaikh",
+    "section": "Experience",
+    "text": "Experience\nWengo Analytics | Head Data Scientist | April 2018 - present\nGeoScynce | Chief Analyst | Spet 2012 - April 2018"
+  },
+  {
+    "objectID": "Projects.html",
+    "href": "Projects.html",
+    "title": "Fathima Shaikh",
+    "section": "",
+    "text": "Here is project 1"
+  },
+  {
+    "objectID": "Projects.html#project-2",
+    "href": "Projects.html#project-2",
+    "title": "Fathima Shaikh",
+    "section": "Project 2",
+    "text": "Project 2"
+  },
+  {
+    "objectID": "Projects.html#project-1",
+    "href": "Projects.html#project-1",
+    "title": "Fathima Shaikh",
+    "section": "",
+    "text": "Here is project 1"
+  },
+  {
+    "objectID": "projects/01-project.html",
+    "href": "projects/01-project.html",
+    "title": "College Expense Prediction",
+    "section": "",
+    "text": "College &lt;- read.csv(\"CollegeF23.csv\")\nset.seed(11281975)\nindex =sample(nrow(College), 2100,replace = FALSE)\nC.train=College[index,]\nC.test=College[-index,]\ndim(C.train)\n\n[1] 2100   18\n\ndim(C.test)\n\n[1] 900  18"
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Fathima Shaikh",
+    "section": "",
+    "text": "College Expense Prediction\n\n\nThis project uses a dataset that includes factors about different colleges, such as if they are private, how many out of state students there are, and how many students the college has. The factors are used to predict the cost of attending the school. In the project, different models were fit to the data, and the project shows that a random forest model performed the best.\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects.html#project-1",
+    "href": "projects.html#project-1",
+    "title": "Fathima Shaikh",
+    "section": "",
+    "text": "Here is project 1"
+  },
+  {
+    "objectID": "projects.html#project-2",
+    "href": "projects.html#project-2",
+    "title": "Fathima Shaikh",
+    "section": "Project 2",
+    "text": "Project 2\nHere is project 2"
+  },
+  {
+    "objectID": "projects/02-project.html",
+    "href": "projects/02-project.html",
+    "title": "Project 2",
+    "section": "",
+    "text": "plot(c(1,2,3,4), c(2,3,4,5))"
+  },
+  {
+    "objectID": "courses.html",
+    "href": "courses.html",
+    "title": "Relevant Courses Taken",
+    "section": "",
+    "text": "All classes are introductory classes\n\nBootstrapping\nMonte Carlo Methods\nData Mining\nMachine Learning Models\nStatistical Modeling\nStatistical Principles\nAdvanced Probability and Statistics"
+  },
+  {
+    "objectID": "projects/01-project.html#i.",
+    "href": "projects/01-project.html#i.",
+    "title": "College Expense Prediction",
+    "section": "i.",
+    "text": "i.\n9 predictors used: “F.Undergrad”,“Outstate”,“Terminal”,“Top10perc”,“Grad.Rate”,“PhD”,“Top25perc”,“Expend”,“Accept”"
+  },
+  {
+    "objectID": "projects/01-project.html#ii.-17-terminal-nodes",
+    "href": "projects/01-project.html#ii.-17-terminal-nodes",
+    "title": "College Expense Prediction",
+    "section": "ii. 17 terminal nodes",
+    "text": "ii. 17 terminal nodes"
+  },
+  {
+    "objectID": "projects/01-project.html#iii.-mcr-0.01762",
+    "href": "projects/01-project.html#iii.-mcr-0.01762",
+    "title": "College Expense Prediction",
+    "section": "iii. MCR: 0.01762",
+    "text": "iii. MCR: 0.01762"
+  },
+  {
+    "objectID": "projects/01-project.html#iv.",
+    "href": "projects/01-project.html#iv.",
+    "title": "College Expense Prediction",
+    "section": "iv.",
+    "text": "iv.\n\ntest_predictions &lt;- predict(tree_model, C.test, type = \"class\")\ntable(C.test$Private, test_predictions)\n\n     test_predictions\n       No Yes\n  No  236   8\n  Yes   4 652\n\n\n\n(4+8)/(234 + 8 + 4 + 652)\n\n[1] 0.01336303\n\n\nThe testing MCR is 1.33%."
+  },
+  {
+    "objectID": "projects/01-project.html#i.-1",
+    "href": "projects/01-project.html#i.-1",
+    "title": "College Expense Prediction",
+    "section": "i.",
+    "text": "i.\n\nsummary(C.train$Expend)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   3186    6863    8444    9727   10822   56233 \n\n\n\nsummary(C.test$Expend)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   3186    6704    8189    9477   10622   45702"
+  },
+  {
+    "objectID": "projects/01-project.html#ii.",
+    "href": "projects/01-project.html#ii.",
+    "title": "College Expense Prediction",
+    "section": "ii.",
+    "text": "ii.\n\nggplot(C.train,aes(x = Expend))+geom_density(fill = \"blue\", alpha = 0.5)+labs(title = \"Density Plot of Expend\",x = \"Expend\",y = \"Density\")+theme_minimal()\n\n\n\n\n\n\n\n\n\niii.\n\nC.train$Expend &lt;-log(C.train$Expend)\nC.test$Expend &lt;-log(C.test$Expend)\nggplot(C.train,aes(x = Expend))+geom_density(fill = \"blue\", alpha = 0.5)+labs(title = \"Density Plot of Log(Expend)\",x = \"Expend\",y = \"Density\")+theme_minimal()"
+  },
+  {
+    "objectID": "projects/01-project.html#i.-2",
+    "href": "projects/01-project.html#i.-2",
+    "title": "College Expense Prediction",
+    "section": "i.",
+    "text": "i.\n\nimportance(bagging)\n\n                   No      Yes MeanDecreaseAccuracy MeanDecreaseGini\nApps         7.996776 14.63382             16.29653         7.852547\nAccept      16.440909 16.77159             22.45017        18.458509\nEnroll       9.946075 10.29376             13.71551         9.608839\nTop10perc   24.656129 22.80333             29.19540        15.902975\nTop25perc   21.502638 25.66150             27.33541        13.640813\nF.Undergrad 81.217340 78.50145            105.98728       387.934372\nP.Undergrad 22.044252 34.70942             34.37470        28.152861\nOutstate    94.639180 97.70798            137.65480       200.661968\nRoom.Board  14.147645 38.00999             39.62783        15.609351\nBooks       15.064323 21.26806             20.72064         5.125512\nPersonal    11.723063 15.97299             18.08786         3.527622\nPhD         20.798156 18.54041             24.07538        13.790794\nTerminal    38.247797 23.37693             38.82201        19.796038\nS.F.Ratio   13.228533 15.97735             18.68794         5.975525\nperc.alumni 26.961270 18.60419             29.63970         7.436632\nGrad.Rate   18.230071 14.98763             20.89308         8.983862\nExpend      10.470543 15.27206             17.96734         5.633619"
+  },
+  {
+    "objectID": "projects/01-project.html#ii.-1",
+    "href": "projects/01-project.html#ii.-1",
+    "title": "College Expense Prediction",
+    "section": "ii.",
+    "text": "ii.\n\n# Plot variable importance\nvarImpPlot(bagging)\n\n\n\n\n\n\n\n\nThe most importance variables is “Outstate”."
+  },
+  {
+    "objectID": "projects/01-project.html#iii.-1",
+    "href": "projects/01-project.html#iii.-1",
+    "title": "College Expense Prediction",
+    "section": "iii.",
+    "text": "iii.\n\n# Report testing MCR\npredictions &lt;- predict(bagging, newdata = C.test)\nactual &lt;- C.test$Private  \nmisclassification_rate &lt;- mean(predictions != actual)\nmisclassification_rate\n\n[1] 0.001111111\n\n\nThe testing MCR is 0.11%"
+  },
+  {
+    "objectID": "projects/01-project.html#i.-3",
+    "href": "projects/01-project.html#i.-3",
+    "title": "College Expense Prediction",
+    "section": "i.",
+    "text": "i.\n\n# Report important variables\nimportance(log_bagging)\n\n              %IncMSE IncNodePurity\nPrivate       7.85475     0.1365468\nApps         29.29824     4.1939672\nAccept       17.38036     2.9655459\nEnroll       30.21717     3.5845051\nTop10perc    70.60875    28.9734666\nTop25perc    22.16605     7.2507768\nF.Undergrad  27.89312     3.6979415\nP.Undergrad  59.33170     7.0736315\nOutstate    120.41569   193.0642281\nRoom.Board   32.13347    10.0754965\nBooks        40.52761     3.8407706\nPersonal     42.15975     4.6976768\nPhD          49.44477    14.2506218\nTerminal     38.25795     7.3654831\nS.F.Ratio   138.11138    51.6618400\nperc.alumni  47.62025     5.4791384\nGrad.Rate    25.96474     4.8544786"
+  },
+  {
+    "objectID": "projects/01-project.html#ii.-2",
+    "href": "projects/01-project.html#ii.-2",
+    "title": "College Expense Prediction",
+    "section": "ii.",
+    "text": "ii.\n\n# Plot variable importance\nvarImpPlot(log_bagging)\n\n\n\n\n\n\n\n\nThe most importance predictor based on %IncMSE is S.F ratio"
+  },
+  {
+    "objectID": "projects/01-project.html#iii.-2",
+    "href": "projects/01-project.html#iii.-2",
+    "title": "College Expense Prediction",
+    "section": "iii.",
+    "text": "iii.\n\n# Predict log(Expend) with testing data \ntest_predictions.2 &lt;- predict(log_bagging, newdata = C.test)\ntest_residuals &lt;- C.test$Expend - test_predictions.2\nmean(test_residuals^2)\n\n[1] 0.002179744\n\n\nThe testing MSE 0.218%"
+  },
+  {
+    "objectID": "projects/01-project.html#iv.-1",
+    "href": "projects/01-project.html#iv.-1",
+    "title": "College Expense Prediction",
+    "section": "iv.",
+    "text": "iv.\nThe R squared of the model is 97.73%"
+  },
+  {
+    "objectID": "index.html#about",
+    "href": "index.html#about",
+    "title": "Fathima Shaikh",
+    "section": "",
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all the required courses for the major, and the relavent courses can be viewed in “Courses”. Additionally, She has diverse internship experiences which can be viewed in “CV”. Lastly, she has a strong interest in creating statistical and machine learning models, which can be viewed in “Projects”."
+  },
+  {
+    "objectID": "index.html#notable-experiences",
+    "href": "index.html#notable-experiences",
+    "title": "Fathima Shaikh",
+    "section": "Notable Experiences",
+    "text": "Notable Experiences\nGeneral Motors | Digital Enablement Intern | Jun. - Aug. 2024 | Detroit, MI"
   }
 ]

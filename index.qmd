@@ -1,11 +1,30 @@
 ---
-
+title: "Fathima Shaikh"
+about:
+  template: trestles
+  image: profile.jpg
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/fathima877
+    - text: LinkedIn
+      url: https://www.linkedin.com/in/fathima-shaikh/
+    - text: Email
+      url: "mailto:fathima.shaikh458@gmail.com"
+      icon: inbox-fill
+    - text: CV
+      url: "cv.pdf"
+      
+toc: false
 ---
+## About
 
-This is a Quarto website.
+Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all required courses, and relevant courses can be viewed in "Courses". Additionally, she has diverse internship experiences which can be viewed in "CV". Lastly, she passionate in creating machine learning models, which can be viewed in "Projects". 
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+## Education
 
-```{r}
-1 + 3
-```
+University of California, Los Angeles | B.S in Statistics and Data Science | Sept 2021 - June 2025
+
+## Notable Experiences
+
+General Motors | Digital Enablement Intern | Jun. - Aug. 2024 | Detroit, MI

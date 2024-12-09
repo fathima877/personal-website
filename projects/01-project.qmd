@@ -1,0 +1,294 @@
+---
+title: College Expense Prediction
+subtitle: This project uses a dataset that includes factors about different colleges, such as if they are private, how many out of state students there are, and how many students the college has. The factors are used to predict the cost of attending the school. In the project, different models were fit to the data, and the project shows that a random forest model performed the best. 
+images: image/college-expense.jpeg
+toc: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#options(repos = c(CRAN = "https://cran.rstudio.com"))
+#install.packages("tree")
+library(tree)
+library(randomForest)
+library(ggplot2)  
+```
+
+```{r}
+College <- read.csv("CollegeF23.csv")
+set.seed(11281975)
+index =sample(nrow(College), 2100,replace = FALSE)
+C.train=College[index,]
+C.test=College[-index,]
+dim(C.train)
+dim(C.test)
+```
+
+# Q1 
+
+# A
+```{r}
+table(C.train$Private)
+table(C.test$Private)
+
+prop.table(table(C.train$Private))
+prop.table(table(C.test$Private))
+```
+# B
+```{r}
+C.train$Private <- as.factor(C.train$Private)
+levels(C.test$Private) <- levels(C.train$Private)
+tree_model <- tree(Private ~., data = C.train)
+summary(tree_model)
+```
+## i. 
+9 predictors used: "F.Undergrad","Outstate","Terminal","Top10perc","Grad.Rate","PhD","Top25perc","Expend","Accept"
+
+## ii. 17 terminal nodes 
+
+## iii. MCR: 0.01762
+
+## iv. 
+```{r}
+test_predictions <- predict(tree_model, C.test, type = "class")
+table(C.test$Private, test_predictions)
+```
+
+```{r}
+(4+8)/(234 + 8 + 4 + 652)
+```
+The testing MCR is 1.33%.
+
+# C. 
+```{r}
+# Plot size vs deviance to visualize the optimal cp for pruning
+cv_tree <- cv.tree(tree_model, FUN = prune.misclass)
+plot(cv_tree$size, cv_tree$dev, type = "b")
+```
+
+Size of pruned tree: 15
+
+# D.
+```{r}
+prune_model <- prune.misclass(tree_model, best = 15)
+plot(prune_model)
+text(prune_model, pretty = 0)
+```
+
+```{r}
+summary(prune_model)
+```
+The MCR of the pruned model is 18.1%.
+
+# E
+```{r}
+test_predictions <- predict(prune_model, newdata = C.test,type = "class")
+table(test_predictions, C.test$Private)
+```
+```{r}
+(8 + 7)/(236 + 7 + 8 + 649)
+```
+The MCR is 1.66%.
+
+# 2
+
+# A. 
+
+## i. 
+```{r}
+summary(C.train$Expend)
+```
+
+```{r}
+summary(C.test$Expend)
+```
+
+## ii.
+```{r}
+ggplot(C.train,aes(x = Expend))+geom_density(fill = "blue", alpha = 0.5)+labs(title = "Density Plot of Expend",x = "Expend",y = "Density")+theme_minimal()
+```
+
+### iii.
+```{r}
+C.train$Expend <-log(C.train$Expend)
+C.test$Expend <-log(C.test$Expend)
+ggplot(C.train,aes(x = Expend))+geom_density(fill = "blue", alpha = 0.5)+labs(title = "Density Plot of Log(Expend)",x = "Expend",y = "Density")+theme_minimal()
+```
+
+# B. 
+```{r}
+# Create a tree model to predict log(Expend)
+log_tree_model <- tree(Expend ~ ., data = C.train)
+summary(log_tree_model)
+```
+
+i.5 predictors used for the model: "Outstate"  "S.F.Ratio" "Enroll"  "Top10perc" "Top25perc"
+
+ii. 11 terminal nodes
+
+iii. 
+```{r}
+train_predictions <- predict(log_tree_model, data = C.train)
+train_residuals <- C.train$Expend - train_predictions
+mean(train_residuals^2)
+```
+
+Training MSE:  0.04187042
+
+iv.
+```{r}
+C.test$Private <- as.factor(C.test$Private)
+test_predictions <- predict(log_tree_model, newdata = C.test)
+test_residuals <- C.test$Expend - test_predictions
+mse_test <- mean(test_residuals^2)
+mse_test
+```
+Testing MSE: 0.04207581
+
+# C
+```{r}
+cv_tree_2 <- cv.tree(log_tree_model)
+plot(cv_tree_2$size, cv_tree_2$dev, type = "b")
+```
+Size of pruned tree: 14
+
+# D
+```{r}
+#Plot pruned tree model
+prune_log_model <- prune.tree(log_tree_model, best = 14)
+plot(prune_log_model)
+text(prune_log_model, pretty = 0)
+```
+
+```{r}
+# Training MSE of pruned tree
+train_predictions <- predict(prune_log_model, data = C.train)
+train_residuals <- C.train$Expend - train_predictions
+mean(train_residuals^2)
+```
+Training MSE of pruned tree model: 0.04187042
+
+# E
+```{r}
+#Predict log(Expend) with testing data
+test_predictions <- predict(prune_log_model, newdata = C.test)
+test_residuals <- C.test$Expend - test_predictions
+mean(test_residuals^2)
+```
+Testing MSE: 0.04207581
+
+# F
+```{r}
+(cor(train_predictions, C.train$Expend))^2
+```
+The r squared of the training data of 75.14%
+```{r}
+(cor(test_predictions, C.test$Expend))^2
+```
+The r squared of the testing data is 74.6%
+
+# 3
+
+# A
+```{r}
+set.seed(705780612)
+# Create a bagging model
+C.train$Private <- as.factor(C.train$Private)
+bagging <- randomForest(Private ~., data = C.train, mtry = 17, importance = TRUE)
+bagging
+```
+
+## i.
+```{r}
+importance(bagging)
+```
+
+## ii.
+```{r}
+# Plot variable importance
+varImpPlot(bagging)
+```
+The most importance variables is "Outstate".
+
+## iii.
+```{r}
+# Report testing MCR
+predictions <- predict(bagging, newdata = C.test)
+actual <- C.test$Private  
+misclassification_rate <- mean(predictions != actual)
+misclassification_rate
+```
+The testing MCR is 0.11%
+ 
+# B. 
+```{r}
+# Create a random forest model with mtry = 4
+rf <- randomForest(Private ~., data = C.train, mtry = 4, importance = TRUE)
+rf
+```
+
+```{r}
+# Report testing MCR
+predictions.2 <- predict(rf, newdata = C.test)
+misclassification_rate <- mean(predictions.2 != C.test$Private)
+misclassification_rate
+```
+The testing MCR is 0.33%
+
+# 4
+
+# A.
+```{r}
+# Create a bagging model to predict logExpend
+log_bagging <- randomForest(Expend ~., data = C.train, mtry = 17, importance = TRUE)
+log_bagging
+```
+
+## i.
+```{r}
+# Report important variables
+importance(log_bagging)
+```
+
+## ii.
+```{r}
+# Plot variable importance
+varImpPlot(log_bagging)
+```
+The most importance predictor based on %IncMSE is S.F ratio
+
+## iii.
+```{r}
+# Predict log(Expend) with testing data 
+test_predictions.2 <- predict(log_bagging, newdata = C.test)
+test_residuals <- C.test$Expend - test_predictions.2
+mean(test_residuals^2)
+```
+The testing MSE 0.218%
+
+## iv.
+The R squared of the model is 97.73%
+
+# B
+```{r}
+log_bagging_4 <-randomForest(Expend~., data = C.train, mtry = 4, importance = TRUE)
+log_bagging_4
+```
+```{r}
+predictions.3 <- predict(log_bagging_4, newdata = C.test)
+mean((predictions.3 - C.test$Expend)^2)
+```
+The MCR is 0.21%
+
+# C
+The R squared is 97.9%
+
+# D. 
+```{r}
+C.test$pred <- predictions.3
+ggplot(C.test,aes(x = Expend, y = predictions.3))+geom_point(color = "green", alpha = 0.6)+ # Scatter plot
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") + # 45-degree line
+  labs(title = "Actual vs Predicted log(Expend)",x = "Actual log(Expend)",y = "Predicted log(Expend)")+
+  theme_minimal()
+```
+The plot shows a linear relationship in the actual and the predicted data, and the predicted data matches the actual data really well.

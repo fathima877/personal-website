@@ -1,19 +1,32 @@
 project:
   type: website
-
+  resources: 
+    - cv.pdf
 website:
-  title: "personal-website"
+  title: "Fathima Shaikh"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: projects.qmd
+        text: Projects
+      - href: courses.qmd
+        text: Courses
+      
+      
+  page-footer: 
+    right: "&copy; 2024, Fathima Shaikh"
 
 format:
   html:
     theme: cosmo
     css: styles.css
     toc: true
+    published-title: "last updated"
+    reference-location: document
+    code-fold: false
+    code-summary: ""
+    fontsize: 1.3em
 
-
-
+execute:
+  freeze: auto
