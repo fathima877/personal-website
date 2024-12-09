@@ -1,6 +1,6 @@
 ---
 title: College Expense Prediction
-subtitle: This project uses a dataset that includes factors about different colleges, such as if they are private, how many out of state students there are, and how many students the college has. The factors are used to predict the cost of attending the school. In the project, different models were fit to the data, and the project shows that a random forest model performed the best. 
+subtitle: This project predicts college attendance costs using factors like private status, out-of-state enrollment, and student population, with a random forest model performing best. 
 images: image/college-expense.jpeg
 toc: false
 ---

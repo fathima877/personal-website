@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all the required courses for the major, and the relavent courses can be viewed in “Courses”. Additionally, She has diverse internship experiences which can be viewed in “CV”. Lastly, she has a strong interest in creating statistical and machine learning models, which can be viewed in “Projects”."
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “CV”. Lastly, she passionate in creating machine learning models, which can be viewed in “Projects”."
   },
   {
     "objectID": "index.html#education",
@@ -60,7 +60,7 @@
     "href": "projects.html",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "College Expense Prediction\n\n\nThis project uses a dataset that includes factors about different colleges, such as if they are private, how many out of state students there are, and how many students the college has. The factors are used to predict the cost of attending the school. In the project, different models were fit to the data, and the project shows that a random forest model performed the best.\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Title\n\n\n\n\nSubtitle\n\n\n\n\n\n\nCollege Expense Prediction\n\n\n\n\n\nThis project predicts college attendance costs using factors like private status, out-of-state enrollment, and student population, with a random forest model performing best.\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects.html#project-1",
@@ -186,7 +186,7 @@
     "href": "index.html#about",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all the required courses for the major, and the relavent courses can be viewed in “Courses”. Additionally, She has diverse internship experiences which can be viewed in “CV”. Lastly, she has a strong interest in creating statistical and machine learning models, which can be viewed in “Projects”."
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “CV”. Lastly, she passionate in creating machine learning models, which can be viewed in “Projects”."
   },
   {
     "objectID": "index.html#notable-experiences",

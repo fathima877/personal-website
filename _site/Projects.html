@@ -78,9 +78,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-title','listing-image','listing-subtitle',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-image','listing-subtitle',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
       
-      searchColumns: ["listing-title","listing-author","listing-image","listing-description"],
+      searchColumns: ["listing-title","listing-author"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -185,30 +185,40 @@ window.Quarto = {
 
 
 
-<div class="quarto-listing quarto-listing-container-grid" id="listing-project-listing">
+<div class="quarto-listing quarto-listing-container-table" id="listing-project-listing">
 <div class="listing-actions-group">
     <div class="input-group input-group-sm quarto-listing-filter">
       <span class="input-group-text"><i class="bi bi-search"></i></span>
       <input type="text" class="search form-control" placeholder="Filter">
     </div>
 </div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1733715719741" data-listing-reading-time-sort="3" data-listing-word-count-sort="554">
-<a href="./projects/01-project.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="projects/01-project_files/figure-html/unnamed-chunk-6-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-College Expense Prediction
-</h5>
-<div class="card-subtitle listing-subtitle">
-This project uses a dataset that includes factors about different colleges, such as if they are private, how many out of state students there are, and how many students the college has. The factors are used to predict the cost of attending the school. In the project, different models were fit to the data, and the project shows that a random forest model performed the best.
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
+<table class="quarto-listing-table table">
+<thead>
+<tr>
+<th>
+Title
+</th>
+<th>
+</th>
+<th>
+Subtitle
+</th>
+</tr>
+</thead>
+<tbody class="list">
+<tr data-index="0" data-listing-file-modified-sort="1733716225604" data-listing-reading-time-sort="3" data-listing-word-count-sort="554" data-listing-title-sort="College Expense Prediction" data-listing-filename-sort="01-project.qmd">
+<td>
+<a href="./projects/01-project.html" class="title listing-title">College Expense Prediction</a>
+</td>
+<td>
+<span class="listing-image"><p class="card-img-top"><img src="projects/01-project_files/figure-html/unnamed-chunk-6-1.png" style="height: 40px;"  class="thumbnail-image card-img"/></p></span>
+</td>
+<td>
+<span class="listing-subtitle">This project predicts college attendance costs using factors like private status, out-of-state enrollment, and student population, with a random forest model performing best.</span>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="listing-no-matching d-none">
 No matching items
 </div>
