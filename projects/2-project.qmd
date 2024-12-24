@@ -1,11 +1,18 @@
 ---
-title: Birth Weight Prediction
-subtitle: This project predicts birth weight of babies using different factors and shows that a logistic regreesion models performs best. 
+title: Birth Weight Predictions (Code Displayed and Interpreted)
+subtitle: This is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby's weight at birth.
+
 toc: false
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load packages
+
+Download these packages: caret, glmnet, ggplot2, readr, pls, and mgcv.
+```{r, include = FALSE}
 library(caret)
 library(glmnet)
 library(ggplot2)
@@ -15,56 +22,102 @@ library(pls)
 library(mgcv)
 ```
 
-# Q1
+## Load the data
+
 ```{r}
 births <- read.csv("~/Downloads/birthsnewone.csv")
 set.seed(123456789)
+head(births)
+```
+
+## Understand the variables
+
+```{r}
+dim(births)
+UniqueCount <- sapply(births, function(x) length(unique(x)))
+FirstFewValues <- sapply(births, function(x) paste0(head(x, 5), collapse = ", "))
+
+df.unique <- data.frame(
+  Column = names(UniqueCount),
+  UniqueCount = UniqueCount,
+  FirstFewValues = FirstFewValues,
+  row.names = NULL
+)
+
+df.unique
+```
+There are 39 predictors, and 7861 data points. 
+The column labeled "X" is an index column that r creates. It's a placeholder index, so you easily access specific rows in your dataset using the index. It can be removed later in data manipulation.
+
+# Analysis Starts Here
+
+## Make sure there are no NA's 
+
+```{r}
+sum(is.na(births))
+```
+
+## Split the data into training and testing groups
+
+```{r}
 i = 1:dim(births)[1]
 i.train <- sample(i,5000,replace=FALSE)
 B.train = births[i.train, ]
 B.test = births[-i.train, ]
-head(births)
 ```
 
-# a.
-```{r}
-model <- lm(Birth.Weight..g. ~ ., data = B.train)
+## Start out by testing a linear model
 
+```{r, warning = FALSE}
+# test a linear model on the training data
+model <- lm(Birth.Weight..g. ~ ., data = B.train)
+summary(model)
+
+# use the linear model and the training data to make predictions of birth weight
 train_pred <- predict(model, data = B.train)
 train_mse <- mean((births$Birth.Weight..g. - train_pred)^2)
 
+# do the same, but using testing data
 test_pred <- predict(model, B.test)
 test_mse <- mean((births$Birth.Weight..g - test_pred)^2)
 
+# Compare the training and testing mean squared error (average of the sum of squared residuals)
 cat("Training MSE:", train_mse, "\n")
 cat("Testing MSE:", test_mse)
-
-# The training MSE is higher than the testing MSE, which rarely occurs because the model is fit to the training data. The significant predictors are Plurality.of.birth, Gender, RaceWhite, Date.LBirth, Month.LBirth, Weeks, Birth.weight.group, Month.Term, Low.BirthNorm, SmokerNo, and Wt.Gain.
-
 ```
 
-# b. 
-```{r}
-# stepwise <- step(model, direction = "backward")
-#summary <- summary(stepwise)
+The training MSE is higher than the testing MSE, which is strange because the model is fit to the training data, not testing. 
+From the linear model, the significant predictors (predictors with a p-value < 0.05) are: Plurality.of.birth, Gender, RaceWhite, Date.LBirth, Month.LBirth, Weeks, Birth.weight.group, Month.Term, Low.BirthNorm, SmokerNo, and Wt.Gain. 
 
-# "Good predictors": Plurality.of.birth, Gender, Race, Weeks, Birth.weight.group, Father.Minority, Smoker, Wt.Gain
+This is so cool! These results tell us that the plurality of birth (1 for 1 baby, 1 for twins, 3 for triplets..), gender, and being White have a large role in determining the baby's birth weight. 
 
+## But can we get a better MSE? Let's try out a backward stepwise model and choose the best predictors.
+
+```{r, warning = FALSE}
+stepwise <- step(model, direction = "backward")
+summary(stepwise) # the results are very long, unfortunately
+```
+From the summary of the stepwise model, you can see a similar outcome as the linear model, with Plurality.of.birth, Gender, Race, Weeks, Birth.weight.group, Father.Minority, Smoker, and Wt.Gain being the top significant predictors.
+
+# Now, we'll create a refined step model using the top 8 most significant predictors. 
+```{r, warning = FALSE}
 step_model <- lm(Birth.Weight..g. ~ Plurality.of.birth + Gender + Race + Weeks + Birth.weight.group + Father.Minority + Smoker + Wt.Gain , data = B.train)
 
+# Predict birth weight using the step model and the training data
 step_train_pred <- predict(step_model, B.train)
 step_train_mse <- mean((births$Birth.Weight..g. - step_train_pred)^2)
 
+# Do the same but with the testing data
 step_test_pred <- predict(step_model, B.test)
 step_test_mse <- mean((births$Birth.Weight..g. - step_test_pred)^2)
 
 cat("Training MSE:", step_train_mse, "\n")
 cat("Testing MSE:", step_test_mse)
-
 ```
 
-# c. 
-Ridge regression with the complete data (births)
+Again the training MSE is higher than the testing MSE, which is unusual. The MSE is lower here than the linear model with all predictors.
+
+## We still want a lower MSE. Let's try out ridge regression with the complete data (births).
 ```{r}
 # Prepare the data
 birthsLog <- transform(births, lWeight = log(as.numeric(births$Birth.Weight..g.)))
@@ -108,15 +161,24 @@ cat("Best lambda: ", bestlamb.cv, "\n")
 print(coef(best_ridge))
 cat("Training MSE: ", MSE.births2, "\n")
 cat("Testing MSE: ", MSE.Btest2, "\n")
-
-
-# The significant predictors are variables like Low.BirthNorm, Birth.weight.group, and Weeks, as they have large coefficients and strong associations to the response. For example, the Weeks coefficient is large (1.828815e-02) compared to others, indicating a strong effect on the response variable. An interesting observation is that AveCigs shows a negative relationship with the response, and SmokerNo has a positive association. The training MSE is 0.0067214 and the testing MSE is 0.0069423, which indicates good model performance and overfitting because the testing MSE is very close to the training MSE.
 ```
+The small lambda value of 0.022 tell us that more predictors contribute to the model. 
 
-# d. 
-Use Lasso Regression Approach to predict the weight of the baby in grams using the
-complete data (births) and interpret your results
+The coefficients for each variable represent the contribution of that variable to the baby's birth weight. 
+
+Positive coefficients (the highest being Weeks: 1.828815e-02 and Birth.weight.group: 1.238124e-01) indicate that increasing this variable is associated with a higher birth weight. Let me define these predictors: 
+- Birth.weight.group: 00 if 500 grams or less, 01 if 501 – 1000 grams, ... etc. 
+- Weeks: Completed Weeks of Gestation; 18 – 45 Weeks
+
+Negative coefficients (the lowest being Plurality.of.birth: -3.429659e-02 and HispDadU: -1.408813e-02) indicate that increasing this variable is associated with a lower birth weight. 
+
+And Variables with coefficients close to 0 have minimal impact on the prediction.
+
+The training MSE is very small - 0.0067214. The testing MSE is also small - 0.0069423 - indicating that the model generalized well, has good prediction accuracy, and doesn't over-fit the data.
+
+## Use Lasso Regression with the complete data
 ```{r}
+# Prepare the data
 birthsLog <- transform(births, lWeight = log(as.numeric(births$Birth.Weight..g.)))
 birthsLog <- subset(birthsLog, select = -c(Birth.Weight..g., X))  
 births2 <- na.omit(birthsLog)  
@@ -166,10 +228,8 @@ qplot(log(cv.outputL$lambda), cv.outputL$cvm) +
 
 ```
 
-
-# e. 
+## Compare the training and testing MSE's of Lasso regression
 ```{r}
-
 y.pred.train_lasso <- predict(best_lasso, x_full, s = bestlamb.cvL)
 mse_train_lasso <- mean((y_full - y.pred.train_lasso)^2)
 cat("Training MSE (Lasso): ", mse_train_lasso, "\n")
@@ -179,10 +239,8 @@ mse_test_lasso <- mean((y_test - y.pred.test_lasso)^2)
 cat("Testing MSE (Lasso): ", mse_test_lasso, "\n")
 
 # Create design matrix (x) and response variable (y)
-x <- model.matrix(lWeight ~ ., data = births2)  # Design matrix (excluding intercept)
-y <- births2$lWeight  # Response variable
-
-
+x <- model.matrix(lWeight ~ ., data = births2)  
+y <- births2$lWeight  
 ```
 
 The multiple linear regression model uses all predictors, resulting in high bias and less flexibility, with training and testing MSE values of 721256.4 and 707930.6, respectively. 
@@ -195,19 +253,11 @@ The Lasso model, with similar performance (training MSE: 0.00642802, Testing MSE
 
 Based on the MSE values, Lasso Regression appears to be the best model. It has the lowest MSE on both the training (0.00642802) and testing sets (0.006628631), suggesting a good balance between bias and variance.
 
-# 2
-Write a short paragraph comparing these approaches in terms of their final number of
-predictors, their bias and their flexibility.
+## So what about these predictors in terms of their final number of predictors, their bias and their flexibility?
 
 Ridge and Lasso regression handle regularization differently. Ridge reduces the size of all coefficients but keeps them in the model, which is great for handling multicollinearity and balancing bias and variance. Lasso can shrink some coefficients to zero, which removes less important predictors and making the model simpler. Ridge is better when you have many small, correlated effects, while Lasso works well when you want to focus on just the key predictors.
 
-
-# a. 
-Fit a PCR model on the training set, with M principal components chosen by cross
-validation. Report the MSE obtained using both data sets (training and testing). along
-with the value of M principal components selected by cross-validation. Report the
-amount of variation explained in the X matrix by those M principal component.
-
+## Test out a PCR model on the training set
 ```{r}
 pcrmodel <- pcr(B.train$Birth.Weight..g.~., data=B.train, scale=TRUE, validation="CV")
 summary(pcrmodel)
@@ -226,6 +276,7 @@ MSE.Btrain <- mean((B.train$Birth.Weight..g. - train_predictions)^2)
 test_predictions <- predict(pcrmodel,newdata = B.test , ncomp = optimal_M)
 MSE.Btest <- mean((B.test$Birth.Weight..g. - test_predictions)^2)
 
+# Report the optimal M principal components and MSE's
 cat("Optimal M:", optimal_M, "\n")
 #cat("Amount of Variance explained by the optimal M:", explained_variance, "\n")
 cat("Training MSE:", MSE.Btrain, "\n")
@@ -235,14 +286,8 @@ cat("Testing MSE:", MSE.Btest, "\n")
 
 ```
 
-# b. 
-Fit a PLS model on the training set, with M principal components chosen by cross
-validation. Report the MSE obtained using both data sets (training and testing), along
-with the value of M principal components selected by cross-validation. Report the
-amount of variation explained in the X matrix by those M principal component.
-Note: Use 85% as your threshold for the amount of variation in the X matrix
+## Do the same but with a PLS model, annd use 85% as your threshold for the amount of variation in the X matrix
 ```{r}
-
 plsmodel <- plsr(B.train$Birth.Weight..g.~., data=B.train, scale=TRUE, validation="CV")
 summary(plsmodel)
 validationplot(plsmodel)
@@ -269,10 +314,8 @@ cat("Testing MSE:", MSE.Btest, "\n")
 
 ```
 
-# c.
-Fit a GAM on the training data, using “the weight of the baby in grams” as the response
-and the features selected in the previous step BIC function (Question 1 Part b) as your
-predictors. Plot the results, and explain your findings.
+
+## Fit a GAM on the training data. Use the features in the step BIC function as the predictors.
 ```{r}
 gammodel <- gam(B.train$Birth.Weight..g. ~ 
                   s(Weeks) + 
@@ -308,8 +351,8 @@ ggplot(B.train, aes(x = Birth.Weight..g., y = Predicted)) +
 ```
 The actual vs. predicted weights plot shows that the GAM model fits the training data very well. It accurately predicts the baby weights given the significant predictors chosen from the step BIC function. Also, the training and testing MSE are relatively close and does not overfit. The testing MSE is higher than the training, as expected. 
 
-# d. 
-Evaluate the model obtained on the testing data set, and explain the results obtained.
+
+## Evaluate the model obtained on the testing data set
 ```{r}
 library(splines)
 
@@ -338,9 +381,8 @@ cat("Testing R-squared:", r_squared, "\n")
 ```
 The GAM model fits the data very well with a high r squared, and the the model does not overfit as the testing MSE is similar to the training MSE and does not overfit. The testing MSE is higher than the training, as expected. 
 
-# e.
-For which of the predictor variables in part c, if any, an evidence of a non-linear
-relationship with the response variable?
+
+## Which of the predictor variables has evidence of a non-linear relationship with the response variable?
 
 ```{r}
 summary(gammodel)
