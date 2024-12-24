@@ -94,8 +94,8 @@ This is so cool! These results tell us that the plurality of birth (1 for 1 baby
 ## But can we get a better MSE? Let's try out a backward stepwise model and choose the best predictors.
 
 ```{r, warning = FALSE}
-stepwise <- step(model, direction = "backward")
-summary(stepwise) # the results are very long, unfortunately
+stepwise <- step(model, direction = "backward") # the results are very long, unfortunately
+summary(stepwise) 
 ```
 From the summary of the stepwise model, you can see a similar outcome as the linear model, with Plurality.of.birth, Gender, Race, Weeks, Birth.weight.group, Father.Minority, Smoker, and Wt.Gain being the top significant predictors.
 
@@ -119,15 +119,17 @@ Again the training MSE is higher than the testing MSE, which is unusual. The MSE
 
 ## We still want a lower MSE. Let's try out ridge regression with the complete data (births).
 ```{r}
-# Prepare the data
+# Do a log transformation on the response. A log transformation can linearize the relationship between response and dependent variables, making linear regression more effective.
 birthsLog <- transform(births, lWeight = log(as.numeric(births$Birth.Weight..g.)))
-birthsLog <- subset(birthsLog, select = -c(Birth.Weight..g., X))
+birthsLog <- subset(birthsLog, select = -c(Birth.Weight..g., X)) # remove the original response variable and the index 
 B.testLog <- transform(B.test, lWeight = log(as.numeric(B.test$Birth.Weight..g.)))
 B.testLog <- subset(B.testLog, select = -c(Birth.Weight..g., X))
 
+# Omit the NA's
 births2 <- na.omit(birthsLog)
 B.test2 <- na.omit(B.testLog)
 
+# Create the model matrices for full and testing data
 x_full <- model.matrix(lWeight ~ ., data = births2)
 y_full <- births2$lWeight
 
@@ -135,12 +137,12 @@ x_test <- model.matrix(lWeight ~ ., data = B.test2)
 y_test <- B.test2$lWeight
 
 # Fit Ridge Regression
-set.seed(705780612)
+set.seed(123)
 lambda.v <- 10^seq(10, -2, length = 100)
 ridge_model <- glmnet(x_full, y_full, alpha = 0, lambda = lambda.v)
 
 # Cross-validation to find best lambda
-set.seed(12)
+set.seed(123)
 cv.output <- cv.glmnet(x_full, y_full, alpha = 0)
 qplot <- qplot(log(cv.output$lambda),cv.output$cvsd)
 bestlamb.cv <- cv.output$lambda.min
@@ -152,10 +154,9 @@ best_ridge <- glmnet(x_full, y_full, alpha = 0, lambda = bestlamb.cv)
 pred.births2 <- predict(best_ridge, newx = x_full, s = bestlamb.cv, type = "response")
 pred.Btest2 <- predict(best_ridge, newx = x_test, s = bestlamb.cv, type = "response")
 
-# Calculate MSE
-MSE.births2 <- mean((y_full - pred.births2)^2) # Training MSE
+# Calculate MSE's
+MSE.births2 <- mean((y_full - pred.births2)^2) # Full data MSE
 MSE.Btest2 <- mean((y_test - pred.Btest2)^2)  # Testing MSE
-
 
 cat("Best lambda: ", bestlamb.cv, "\n")
 print(coef(best_ridge))
@@ -170,49 +171,50 @@ Positive coefficients (the highest being Weeks: 1.828815e-02 and Birth.weight.gr
 - Birth.weight.group: 00 if 500 grams or less, 01 if 501 – 1000 grams, ... etc. 
 - Weeks: Completed Weeks of Gestation; 18 – 45 Weeks
 
-Negative coefficients (the lowest being Plurality.of.birth: -3.429659e-02 and HispDadU: -1.408813e-02) indicate that increasing this variable is associated with a lower birth weight. 
+Negative coefficients (the lowest being Plurality.of.birth: -3.429659e-02 and HispDadU: -1.408813e-02) indicate that increasing this variable is associated with a lower birth weight. HispDadU means the hispanic origin of the father is unknown.
 
-And Variables with coefficients close to 0 have minimal impact on the prediction.
+Lastly, variables with coefficients close to 0 have minimal impact on the prediction.
 
-The training MSE is very small - 0.0067214. The testing MSE is also small - 0.0069423 - indicating that the model generalized well, has good prediction accuracy, and doesn't over-fit the data.
+The training MSE, 0.0067214, is very samll. The testing MSE is also small - 0.0069423 - indicating that the model generalized well, has good prediction accuracy, and doesn't over-fit the data.
 
-## Use Lasso Regression with the complete data
+## Now we just want to show other more complex techniques and how they can make a difference. Here we will try Lasso Regression with the complete data.
 ```{r}
-# Prepare the data
+# Prepare the data and do a log transformation
 birthsLog <- transform(births, lWeight = log(as.numeric(births$Birth.Weight..g.)))
 birthsLog <- subset(birthsLog, select = -c(Birth.Weight..g., X))  
-births2 <- na.omit(birthsLog)  
+births2 <- na.omit(birthsLog)  # remove NA's
 
+# Create model matrices with full and testing data
 x_full <- model.matrix(lWeight ~ ., data = births2) 
 y_full <- births2$lWeight
 
 x_test <- model.matrix(lWeight ~ ., data = B.test2)
 y_test <- B.test2$lWeight
 
-lambda.v <- 10^seq(10, -2, length = 100)
-
+# Fit lasso regression
 set.seed(123)
+lambda.v <- 10^seq(10, -2, length = 100)
 model.lasso <- glmnet(x_full, y_full, alpha = 1, lambda = lambda.v)
 
-coeffsL <- coef(model.lasso)
-
-set.seed(12)
+# Cross-validation to find best lambda
+set.seed(123)
 cv.outputL <- cv.glmnet(x_full, y_full, alpha = 1)
 bestlamb.cvL <- cv.outputL$lambda.min
-cat("Best Lambda (Lasso):", bestlamb.cvL, "\n")
 
+# Fit the model with the best lambda
 best_lasso <- glmnet(x_full, y_full, alpha = 1, lambda = bestlamb.cvL)
 
-# Calculate Training MSE
+# Predictions
 pred.lasso.train <- predict(best_lasso, newx = x_full, s = bestlamb.cvL, type = "response")
 pred.lasso.test <- predict(best_lasso, newx = x_test, s = bestlamb.cvL, type = "response")
-train_mse_lasso <- mean((y_full - pred.lasso.train)^2)
-test_mse_lasso <- mean((y_test - pred.lasso.test)^2)
 
+# Calculate MSE's
+train_mse_lasso <- mean((y_full - pred.lasso.train)^2)  # Full data MSE
+test_mse_lasso <- mean((y_test - pred.lasso.test)^2) # Testing MSE
+
+cat("Best Lambda (Lasso):", bestlamb.cvL, "\n")
 cat("Training MSE (Lasso):", train_mse_lasso, "\n")
-
 cat("Testing MSE (Lasso):", test_mse_lasso, "\n")
-
 
 # Plot cross-validation results
 qplot(log(cv.outputL$lambda), cv.outputL$cvm) +
@@ -222,71 +224,67 @@ qplot(log(cv.outputL$lambda), cv.outputL$cvm) +
   xlab("Log(Lambda)") +
   ylab("Cross-Validation Error")
 
-#The Lasso regression model has a lower MSE than the linear model (by about 0.003), which shows that the shrinkage technique in Lasso regression can improve model generalization while preventing overfitting. 
-
-# Also, the Cross-Validation Error vs Lambda plot shows the error increasing rapidly as the log of lambda moves from -4 to 0.
-
 ```
+The lasso regression model has a slightly lower MSE than the ridge regression model (by about 0.0003), which shows that the shrinkage technique in Lasso regression can improve model generalization for this dataset. 
 
-## Compare the training and testing MSE's of Lasso regression
-```{r}
-y.pred.train_lasso <- predict(best_lasso, x_full, s = bestlamb.cvL)
-mse_train_lasso <- mean((y_full - y.pred.train_lasso)^2)
-cat("Training MSE (Lasso): ", mse_train_lasso, "\n")
+Also, the plot shows the cross-validation error (the average prediction error during cross-validation) increasing rapidly as the log of lambda moves from -4 to 0. So as lambda increases, the model becomes overly regularized, leading to underfitting and poor performance
 
-y.pred.test_lasso <- predict(best_lasso, x_test, s = bestlamb.cvL)
-mse_test_lasso <- mean((y_test - y.pred.test_lasso)^2)
-cat("Testing MSE (Lasso): ", mse_test_lasso, "\n")
+## Summary of the models tested
 
-# Create design matrix (x) and response variable (y)
-x <- model.matrix(lWeight ~ ., data = births2)  
-y <- births2$lWeight  
-```
+To summarize what we found, we need to know 2 definitions: 
+- Bias: The error from the model's assumptions. High bias means the model is too simple and misses important patterns (underfitting).
+- Flexibility: How well the model adapts to the data. High flexibility means the model can capture complex patterns, but too much flexibility can lead to overfitting, where the model includes noise in the data.
 
 The multiple linear regression model uses all predictors, resulting in high bias and less flexibility, with training and testing MSE values of 721256.4 and 707930.6, respectively. 
 
 The stepwise regression model, selecting 8 predictors, has only a slightly better MSE (721443.2 and 709755.3) respectively.
 
-Ridge regression, with a lambda of 0.00224, after a log transformation, achieves a training MSE of 0.006721434 and a testing MSE of 0.006942309 by applying penalties to predictors, balancing bias and flexibility. These MSE are better that what was shown in stepwise. 
+Ridge regression, with a lambda of 0.00224, after a log transformation, achieves a training MSE of 0.006721434 and a testing MSE of 0.006942309 by applying penalties to predictors, balancing bias and flexibility. These MSE's are better that what was shown in stepwise. 
 
 The Lasso model, with similar performance (training MSE: 0.00642802, Testing MSE: 0.006628631), further reduces predictors, offering higher flexibility and lower variance. 
 
 Based on the MSE values, Lasso Regression appears to be the best model. It has the lowest MSE on both the training (0.00642802) and testing sets (0.006628631), suggesting a good balance between bias and variance.
 
 ## So what about these predictors in terms of their final number of predictors, their bias and their flexibility?
+To answer this question, we need to know the definition of:
+Regularization: A technique to prevent overfitting by adding a penalty for complexity to the model.
+- Strong Regularization: Reduces the model's flexibility, making it simpler.
+- Weak Regularization: Allows more flexibility, letting the model capture more details.
 
-Ridge and Lasso regression handle regularization differently. Ridge reduces the size of all coefficients but keeps them in the model, which is great for handling multicollinearity and balancing bias and variance. Lasso can shrink some coefficients to zero, which removes less important predictors and making the model simpler. Ridge is better when you have many small, correlated effects, while Lasso works well when you want to focus on just the key predictors.
+Ridge and Lasso regression handle regularization differently. Ridge reduces the size of all coefficients but keeps them in the model, which is great for balancing bias and variance. Lasso can shrink some coefficients to zero, which removes less important predictors and makes the model simpler. Ridge is better when you have many small, correlated effects, while Lasso works well when you want to focus on just the key predictors.
 
-## Test out a PCR model on the training set
+## Instead of focusing on penalties and regularizing, we can remove dimensions and correlations by testing a PCR model on the training set. 
+
+A principal component is a way to combine the original features in your data to find the most important patterns. The first one shows the most important patterns, and each next one shows less important details that are still there.
 ```{r}
+# Fit the model
 pcrmodel <- pcr(B.train$Birth.Weight..g.~., data=B.train, scale=TRUE, validation="CV")
 summary(pcrmodel)
 validationplot(pcrmodel)
 
 # choose 40 principle components based on analysis of summary of pcr model
-# amount of variation explained by 40 principal components: 99.37% (also from pcr model analysis)
+# amount of variation explained by 40 principal components: 99.37% 
 
-# Check to see the optimal M and the amount of variation
+# Check to see the optimal M number of principal components 
 optimal_M <- which.min(pcrmodel$validation$PRESS)
 
-# Test model
+# Make predictions and find MSE's
 train_predictions <- predict(pcrmodel, newdata = B.train, ncomp = optimal_M)
 MSE.Btrain <- mean((B.train$Birth.Weight..g. - train_predictions)^2)
 
 test_predictions <- predict(pcrmodel,newdata = B.test , ncomp = optimal_M)
 MSE.Btest <- mean((B.test$Birth.Weight..g. - test_predictions)^2)
 
-# Report the optimal M principal components and MSE's
+# Report the optimal M and MSE's
 cat("Optimal M:", optimal_M, "\n")
-#cat("Amount of Variance explained by the optimal M:", explained_variance, "\n")
 cat("Training MSE:", MSE.Btrain, "\n")
 cat("Testing MSE:", MSE.Btest, "\n")
-
-# The validation plot is a visualization for the optimal M by showing that the RMSEP is lowest beginning at around 38.
-
 ```
+The validation plot is a visualization for the optimal M by showing that the error is lowest beginning at around 38. 38 principal components means you’ve transformed your original features into 38 new variables (or dimensions) that capture the most important patterns in the data.
 
-## Do the same but with a PLS model, annd use 85% as your threshold for the amount of variation in the X matrix
+So, while the MSE's in Lasso and Ridge Regression are much lower, PCR can still be valuable if the primary concern is reducing multicollinearity or performing dimensionality reduction. 
+
+## Next, we will test a PLS model, which also performs dimensionality reduction, but with a key difference in how the components are selected.
 ```{r}
 plsmodel <- plsr(B.train$Birth.Weight..g.~., data=B.train, scale=TRUE, validation="CV")
 summary(plsmodel)
@@ -310,13 +308,16 @@ cat("Optimal M:", optimal_M, "\n")
 cat("Training MSE:", MSE.Btrain, "\n")
 cat("Testing MSE:", MSE.Btest, "\n")
 
-# The validation plot is a visualization for the optimal M by showing that the RMSEP is lowest beginning at a little before 10.
-
 ```
 
+The MSE's are roughly equal, but the validation plot shows that the error is lowest beginning at a little before 10 principal components.
 
-## Fit a GAM on the training data. Use the features in the step BIC function as the predictors.
+## Lastly, we will fit a GAM on the training and testing data. 
+
+Unlike linear regression, where relationships are assumed to be linear, a Generalized Additive Model (GAM) can model non-linear relationships by using smooth (not necessarily linear) functions for each predictor.
+
 ```{r}
+# Fit the model on the training data with the significant predictors
 gammodel <- gam(B.train$Birth.Weight..g. ~ 
                   s(Weeks) + 
                   s(Wt.Gain) + 
@@ -324,17 +325,12 @@ gammodel <- gam(B.train$Birth.Weight..g. ~
                   Birth.weight.group + Father.Minority + Smoker, 
                 data = B.train)
 
-#summary(gammodel)
+summary(gammodel)
 
-par(mfrow = c(2, 2)) 
-#plot(gammodel, se = TRUE, shade = TRUE)
-
+# Predict and find the training MSE
 train_predictions <- predict(gammodel, newdata = B.train)
 train_mse <- mean((B.train$Birth.Weight..g. - train_predictions)^2)
 cat("Training MSE:", train_mse, "\n")
-
-
-# Unfortunately, I've run into errors with the plot function.
 
 B.train$Predicted <- predict(gammodel, newdata = B.train)
 
@@ -349,7 +345,7 @@ ggplot(B.train, aes(x = Birth.Weight..g., y = Predicted)) +
 )
 
 ```
-The actual vs. predicted weights plot shows that the GAM model fits the training data very well. It accurately predicts the baby weights given the significant predictors chosen from the step BIC function. Also, the training and testing MSE are relatively close and does not overfit. The testing MSE is higher than the training, as expected. 
+The actual vs. predicted weights plot shows that the GAM model fits the training data very well. It accurately predicts the baby weights given the significant predictors chosen from the step BIC function. 
 
 
 ## Evaluate the model obtained on the testing data set
@@ -357,7 +353,7 @@ The actual vs. predicted weights plot shows that the GAM model fits the training
 library(splines)
 
 gammodel2 <- gam(Birth.Weight..g. ~ Plurality.of.birth + Gender + Race + s(Weeks, k = 5) + Birth.weight.group + Father.Minority + Smoker + s(Wt.Gain, k = 5),data = B.test)
-#summary(gammodel2)
+summary(gammodel2)
 
 B.test$Predicted <- predict(gammodel2, newdata = B.test)
 test_mse <- mean((B.test$Birth.Weight..g. - B.test$Predicted)^2)
@@ -379,18 +375,14 @@ labs(
 cat("Testing MSE:", test_mse, "\n")
 cat("Testing R-squared:", r_squared, "\n")
 ```
-The GAM model fits the data very well with a high r squared, and the the model does not overfit as the testing MSE is similar to the training MSE and does not overfit. The testing MSE is higher than the training, as expected. 
+The GAM model fits the testing data very well with a high r squared, and the the model does not overfit as the testing MSE is similar to the training MSE. The testing MSE is higher than the training, as expected. 
 
 
 ## Which of the predictor variables has evidence of a non-linear relationship with the response variable?
 
-```{r}
-summary(gammodel)
-```
+"Weeks" shows evidence of a non-linear relationship with birth weight, with a very low p-value in both GAM summaries.
+"Wt.Gain" shows a weak non-linear relationship with a p value closer to 0.05, suggesting it is closer to linear but not completely. 
 
-
-"Weeks" shows evidence of a moderate non-linear relationship with birth weight.
-"Wt.Gain" shows a weak non-linear relationship, suggesting it is closer to linear but not completely. 
-They both have p-values less than 0.05, suggesting that there is evidence for a non-linear relationship between the variables.
+## And that's it. I hope you enjoyed seeing some applications of machine learning models onto an interesting data set.
 
 
