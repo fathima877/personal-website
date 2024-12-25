@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Exploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen – Fathima Shaikh</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Fathima Shaikh</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../courses.html"> 
+<span class="menu-text">Courses</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#exploratory-data-analysis-eda-and-data-cleaning" id="toc-exploratory-data-analysis-eda-and-data-cleaning" class="nav-link active" data-scroll-target="#exploratory-data-analysis-eda-and-data-cleaning">Exploratory Data Analysis (EDA) and Data Cleaning</a></li>
+  <li><a href="#data-anomalies" id="toc-data-anomalies" class="nav-link" data-scroll-target="#data-anomalies">Data Anomalies</a></li>
+  <li><a href="#hypothesis-1" id="toc-hypothesis-1" class="nav-link" data-scroll-target="#hypothesis-1"><strong>Hypothesis 1</strong></a>
+  <ul class="collapse">
+  <li><a href="#barplot-of-totals-for-injuries-people-and-children-killed-and-strikes" id="toc-barplot-of-totals-for-injuries-people-and-children-killed-and-strikes" class="nav-link" data-scroll-target="#barplot-of-totals-for-injuries-people-and-children-killed-and-strikes">Barplot of totals for injuries, people and children killed and strikes</a></li>
+  <li><a href="#boxplot-for-strikes-and-people-killed-1st-half-of-terms" id="toc-boxplot-for-strikes-and-people-killed-1st-half-of-terms" class="nav-link" data-scroll-target="#boxplot-for-strikes-and-people-killed-1st-half-of-terms">Boxplot for Strikes and People Killed (1st Half of Terms)</a></li>
+  <li><a href="#anova-for-strikes-in-full-dataset" id="toc-anova-for-strikes-in-full-dataset" class="nav-link" data-scroll-target="#anova-for-strikes-in-full-dataset">ANOVA for Strikes in Full Dataset</a></li>
+  <li><a href="#anova-for-people-killed-in-full-dataset" id="toc-anova-for-people-killed-in-full-dataset" class="nav-link" data-scroll-target="#anova-for-people-killed-in-full-dataset">ANOVA for People Killed in Full Dataset</a></li>
+  <li><a href="#anova-for-strikes-in-1st-half-of-presidency-2009-2020" id="toc-anova-for-strikes-in-1st-half-of-presidency-2009-2020" class="nav-link" data-scroll-target="#anova-for-strikes-in-1st-half-of-presidency-2009-2020"><strong>ANOVA for Strikes in 1st Half of Presidency (2009-2020)</strong></a></li>
+  <li><a href="#anova-for-average-people-killed-in-1st-half-of-presidency-2009-2020" id="toc-anova-for-average-people-killed-in-1st-half-of-presidency-2009-2020" class="nav-link" data-scroll-target="#anova-for-average-people-killed-in-1st-half-of-presidency-2009-2020"><strong>ANOVA for Average People Killed in 1st Half of Presidency (2009-2020)</strong></a></li>
+  <li><a href="#time-series-plots-of-number-of-strikes-and-people-killed" id="toc-time-series-plots-of-number-of-strikes-and-people-killed" class="nav-link" data-scroll-target="#time-series-plots-of-number-of-strikes-and-people-killed">Time Series Plots of Number of Strikes and People Killed</a></li>
+  </ul></li>
+  <li><a href="#hypothesis-2" id="toc-hypothesis-2" class="nav-link" data-scroll-target="#hypothesis-2">Hypothesis 2</a>
+  <ul class="collapse">
+  <li><a href="#min-and-max-number-of-strikes-per-year" id="toc-min-and-max-number-of-strikes-per-year" class="nav-link" data-scroll-target="#min-and-max-number-of-strikes-per-year">Min and Max number of strikes per year</a></li>
+  <li><a href="#min-and-max-people-killed-per-year" id="toc-min-and-max-people-killed-per-year" class="nav-link" data-scroll-target="#min-and-max-people-killed-per-year">Min and Max people killed per year</a></li>
+  <li><a href="#time-series-of-type-of-victim-per-year" id="toc-time-series-of-type-of-victim-per-year" class="nav-link" data-scroll-target="#time-series-of-type-of-victim-per-year">Time series of type of victim per year</a></li>
+  <li><a href="#time-series-of-average-victims-by-per-atack-by-type-per-year" id="toc-time-series-of-average-victims-by-per-atack-by-type-per-year" class="nav-link" data-scroll-target="#time-series-of-average-victims-by-per-atack-by-type-per-year">Time Series of Average Victims By Per Atack By Type Per Year</a></li>
+  </ul></li>
+  <li><a href="#hypothesis-3" id="toc-hypothesis-3" class="nav-link" data-scroll-target="#hypothesis-3">Hypothesis 3</a>
+  <ul class="collapse">
+  <li><a href="#table-of-total-kills-per-province" id="toc-table-of-total-kills-per-province" class="nav-link" data-scroll-target="#table-of-total-kills-per-province">Table of total kills per province</a></li>
+  <li><a href="#comparative-bar-chart-of-civilians-vs-people-killed-for-provinces-with-high-strikes" id="toc-comparative-bar-chart-of-civilians-vs-people-killed-for-provinces-with-high-strikes" class="nav-link" data-scroll-target="#comparative-bar-chart-of-civilians-vs-people-killed-for-provinces-with-high-strikes">Comparative bar chart of civilians vs people killed, for provinces with high strikes</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Exploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen</h1>
+<p class="subtitle lead">This is the code for a group project I completed with my Statistical Consulting class. We used drone data from The Guardian that detailed the type of attack and the number of casualties in Yemen from 2002 - present. We formed 3 hypothesis relating to presidential administrations, death vs strike count, and location. In this report, I display the graphs my group and I used and what we learned from them.</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Download Libraries</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fuzzyjoin)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="exploratory-data-analysis-eda-and-data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda-and-data-cleaning">Exploratory Data Analysis (EDA) and Data Cleaning</h2>
+<p>Read in Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>yemen <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"yemen.csv"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">324</span>,]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yemen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Strike.ID       Date   Location Province
+1    YEM001 03/11/2002    Unknown    Marib
+2    YEM002 17/12/2009  Al Majala    Abyan
+3    YEM003 17/12/2009      Arhab    Sanaa
+4    YEM004 24/12/2009       Rafd   Shabwa
+5    YEM005 12/01/2010    Unknown   Shabwa
+6    YEM006 15/01/2010 Al Ajashir    Saada
+                                    Type.of.attack
+1                                     Drone strike
+2                            Cruise missile strike
+3 US-Yemen ground operation\nPossible drone strike
+4        Airstrike\nPossible cruise missile strike
+5   Yemen ground operation\nPossible US assistance
+6                                        Airstrike
+  Confirmed..possible.US.attack. Air.operation. Drone.strike
+1                      Confirmed              1            1
+2                      Confirmed              0            0
+3                      Confirmed              0            0
+4                      Confirmed              1            0
+5                       Possible              0            0
+6                       Possible              1            0
+  Minimum.number.of.strikes Maximum.number.of.strikes Minimum.people.killed
+1                         1                         1                     6
+2                         1                         1                    55
+3                         1                         1                     0
+4                         1                         1                    30
+5                         1                         1                     1
+6                         1                         1                     0
+  Maximum.people.killed Minimum.civilians.reported.killed
+1                     6                                 0
+2                    58                                44
+3                     0                                 0
+4                    34                                 0
+5                     2                                 0
+6                     6                                 0
+  Maximum.civilians.reported.killed Minimum.children.reported.killed
+1                                 0                                0
+2                                44                               21
+3                                 0                                0
+4                                 0                                0
+5                                 0                                0
+6                                 0                                0
+  Maximum.children.reported.killed Minimum.people.injured
+1                                0                      0
+2                               22                      9
+3                                0                      0
+4                                0                      0
+5                                0                      0
+6                                0                      0
+  Maximum.people.injured Strike.link X
+1                      0      YEM001  
+2                      9      YEM002  
+3                      0      YEM003  
+4                      0      YEM004  
+5                      0      YEM005  
+6                      0      YEM006  </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(yemen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 324  20</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(yemen))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">colnames</span>(yemen)[<span class="dv">9</span><span class="sc">:</span><span class="dv">18</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> numeric_cols) {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  yemen[, i] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(yemen[, i]))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(yemen, <span class="fu">aes</span>(<span class="at">x=</span>Minimum.number.of.strikes, <span class="at">y=</span>Maximum.number.of.strikes)) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">col=</span><span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>,<span class="at">intercept=</span><span class="dv">0</span>, <span class="at">color=</span><span class="st">"darkgrey"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There are 324 data points, 29 variables, and no NA values.</p>
+<p>The graph reveals discrepancies between minimum and maximum airstrikes, suggesting data uncertainty. Dots on the dashed line indicate full certainty. The number of strikes nearer to 0 show discrepancies, but the dots farther from 0 show certainty. This could mean that higher strike counts are more reliably recorded compared to lower strike counts.</p>
+</section>
+<section id="data-anomalies" class="level2">
+<h2 class="anchored" data-anchor-id="data-anomalies">Data Anomalies</h2>
+<p>We corrected instances where minimum and maximum ranges were reversed. We then manually fixed misspellings in city and province names. We also creating and edited data frames to simplify our analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Strike.ID, Minimum.number.of.strikes, Maximum.number.of.strikes) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Minimum.number.of.strikes <span class="sc">&gt;</span> Maximum.number.of.strikes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Strike.ID Minimum.number.of.strikes Maximum.number.of.strikes
+1    YEM266                         9                         4
+2    YEM279                         8                         6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>yemen[<span class="fu">c</span>(<span class="dv">266</span>,<span class="dv">279</span>),]<span class="sc">$</span>Minimum.number.of.strikes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>yemen[<span class="fu">c</span>(<span class="dv">266</span>,<span class="dv">279</span>),]<span class="sc">$</span>Maximum.number.of.strikes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">9</span>,<span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Focuses on presidential term</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>presidents_by_term <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">start_date =</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2001-01-20"</span>), <span class="fu">as.Date</span>(<span class="st">"2021-01-20"</span>), <span class="at">by =</span> <span class="st">"4 years"</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date =</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2005-01-19"</span>), <span class="fu">as.Date</span>(<span class="st">"2025-01-19"</span>), <span class="at">by =</span> <span class="st">"4 years"</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">president =</span> <span class="fu">c</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"George W. Bush (1)"</span>, <span class="st">"George W. Bush (2)"</span>,  </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Barack Obama (1)"</span>, <span class="st">"Barack Obama(2)"</span>,     </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Donald Trump"</span>,                     </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Joe Biden"</span>                         </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>presidents_by_term</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  start_date   end_date          president
+1 2001-01-20 2005-01-19 George W. Bush (1)
+2 2005-01-20 2009-01-19 George W. Bush (2)
+3 2009-01-20 2013-01-19   Barack Obama (1)
+4 2013-01-20 2017-01-19    Barack Obama(2)
+5 2017-01-20 2021-01-19       Donald Trump
+6 2021-01-20 2025-01-19          Joe Biden</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adding columns and changing types</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>yemen <span class="ot">&lt;-</span> yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">as.numeric</span>(<span class="fu">str_sub</span>(Date, <span class="at">start =</span> <span class="sc">-</span><span class="dv">4</span>)),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Date =</span> <span class="fu">as.Date</span>(yemen<span class="sc">$</span>Date, <span class="st">"%d/%m/%Y"</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Average.number.of.strikes =</span> (Minimum.number.of.strikes <span class="sc">+</span> Maximum.number.of.strikes)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">Average.people.killed =</span> (Minimum.people.killed <span class="sc">+</span> Maximum.people.killed)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">Average.civilians.reported.killed =</span> (Minimum.civilians.reported.killed <span class="sc">+</span> Maximum.civilians.reported.killed)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">Average.children.reported.killed =</span> (Minimum.children.reported.killed <span class="sc">+</span> Maximum.children.reported.killed)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">Average.people.injured =</span> (Minimum.people.injured <span class="sc">+</span> Maximum.people.injured)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">Year =</span> <span class="fu">format</span>(Date, <span class="st">"%Y"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fuzzy_left_join</span>(presidents_by_term, </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Date"</span> <span class="ot">=</span> <span class="st">"start_date"</span>, <span class="st">"Date"</span> <span class="ot">=</span> <span class="st">"end_date"</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">match_fun =</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">&gt;=</span><span class="st">`</span>,<span class="st">`</span><span class="at">&lt;=</span><span class="st">`</span>))</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(yemen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Strike.ID       Date   Location Province
+1    YEM001 2002-11-03    Unknown    Marib
+2    YEM002 2009-12-17  Al Majala    Abyan
+3    YEM003 2009-12-17      Arhab    Sanaa
+4    YEM004 2009-12-24       Rafd   Shabwa
+5    YEM005 2010-01-12    Unknown   Shabwa
+6    YEM006 2010-01-15 Al Ajashir    Saada
+                                    Type.of.attack
+1                                     Drone strike
+2                            Cruise missile strike
+3 US-Yemen ground operation\nPossible drone strike
+4        Airstrike\nPossible cruise missile strike
+5   Yemen ground operation\nPossible US assistance
+6                                        Airstrike
+  Confirmed..possible.US.attack. Air.operation. Drone.strike
+1                      Confirmed              1            1
+2                      Confirmed              0            0
+3                      Confirmed              0            0
+4                      Confirmed              1            0
+5                       Possible              0            0
+6                       Possible              1            0
+  Minimum.number.of.strikes Maximum.number.of.strikes Minimum.people.killed
+1                         1                         1                     6
+2                         1                         1                    55
+3                         1                         1                     0
+4                         1                         1                    30
+5                         1                         1                     1
+6                         1                         1                     0
+  Maximum.people.killed Minimum.civilians.reported.killed
+1                     6                                 0
+2                    58                                44
+3                     0                                 0
+4                    34                                 0
+5                     2                                 0
+6                     6                                 0
+  Maximum.civilians.reported.killed Minimum.children.reported.killed
+1                                 0                                0
+2                                44                               21
+3                                 0                                0
+4                                 0                                0
+5                                 0                                0
+6                                 0                                0
+  Maximum.children.reported.killed Minimum.people.injured
+1                                0                      0
+2                               22                      9
+3                                0                      0
+4                                0                      0
+5                                0                      0
+6                                0                      0
+  Maximum.people.injured Strike.link X Year Average.number.of.strikes
+1                      0      YEM001   2002                         1
+2                      9      YEM002   2009                         1
+3                      0      YEM003   2009                         1
+4                      0      YEM004   2009                         1
+5                      0      YEM005   2010                         1
+6                      0      YEM006   2010                         1
+  Average.people.killed Average.civilians.reported.killed
+1                   6.0                                 0
+2                  56.5                                44
+3                   0.0                                 0
+4                  32.0                                 0
+5                   1.5                                 0
+6                   3.0                                 0
+  Average.children.reported.killed Average.people.injured start_date   end_date
+1                              0.0                      0 2001-01-20 2005-01-19
+2                             21.5                      9 2009-01-20 2013-01-19
+3                              0.0                      0 2009-01-20 2013-01-19
+4                              0.0                      0 2009-01-20 2013-01-19
+5                              0.0                      0 2009-01-20 2013-01-19
+6                              0.0                      0 2009-01-20 2013-01-19
+           president
+1 George W. Bush (1)
+2   Barack Obama (1)
+3   Barack Obama (1)
+4   Barack Obama (1)
+5   Barack Obama (1)
+6   Barack Obama (1)</code></pre>
+</div>
+</div>
+<p>The first data frame clearly labels the start and end date of each presidency they can be easily matched with airstrike data.</p>
+<p>The second data frame shows the columns appended to the initial dataset. We added on averages of deaths and injuries calculated from the initial data, and the info from the first data frame.</p>
+</section>
+<section id="hypothesis-1" class="level1">
+<h1><strong>Hypothesis 1</strong></h1>
+<p><strong>Ho</strong>: There is no difference in the impact and amount of strikes during the first half of each president’s term.</p>
+<p><strong>Ha</strong>: There is a difference in the impact and amount of strikes during the first half of each president’s term.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># usign the "date" data type</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>yemen<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(yemen<span class="sc">$</span>Date, <span class="at">format =</span> <span class="st">"%d/%m/%Y"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sectioning the rows to the match the presidencies</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>Bush <span class="ot">&lt;-</span> yemen[<span class="dv">1</span>,]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>Obama1 <span class="ot">&lt;-</span> yemen[<span class="dv">2</span><span class="sc">:</span><span class="dv">119</span>,]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>Obama2 <span class="ot">&lt;-</span> yemen[<span class="dv">120</span><span class="sc">:</span><span class="dv">257</span>,]</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>Trump <span class="ot">&lt;-</span> yemen[<span class="dv">258</span><span class="sc">:</span><span class="dv">324</span>,]</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># sectioning the first half of each presidency (except Bush)</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>Obama1_first_half <span class="ot">&lt;-</span> Obama1[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,]</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>Obama2_first_half <span class="ot">&lt;-</span> Obama2[<span class="dv">1</span><span class="sc">:</span><span class="dv">59</span>,]</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>Trump_first_half <span class="ot">&lt;-</span> Trump[<span class="dv">1</span><span class="sc">:</span><span class="dv">65</span>,]</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># summing up number of strikes, deaths, child deaths, and injuries for the first half of each presidency</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>first_half_total_strikes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(Obama1_first_half<span class="sc">$</span>Average.number.of.strikes),</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">sum</span>(Obama2_first_half<span class="sc">$</span>Average.number.of.strikes),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">sum</span>(Trump_first_half<span class="sc">$</span>Average.number.of.strikes))</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>first_half_killed <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(Obama1_first_half<span class="sc">$</span>Average.people.killed),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">sum</span>(Obama2_first_half<span class="sc">$</span>Average.people.killed),</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">sum</span>(Trump_first_half<span class="sc">$</span>Average.people.killed))</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>first_half_children <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(Obama1_first_half<span class="sc">$</span>Average.children.reported.killed),</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">sum</span>(Obama2_first_half<span class="sc">$</span>Average.children.reported.killed),</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">sum</span>(Trump_first_half<span class="sc">$</span>Average.children.reported.killed))</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>first_half_injured <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sum</span>(Obama1_first_half<span class="sc">$</span>Average.people.injured),</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">sum</span>(Obama2_first_half<span class="sc">$</span>Average.people.injured),</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">sum</span>(Trump_first_half<span class="sc">$</span>Average.people.injured)) </span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co"># combining and labeling</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>firstYears <span class="ot">&lt;-</span> <span class="fu">rbind</span>(first_half_children,first_half_injured, first_half_total_strikes,first_half_killed)</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(firstYears) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'Children Killed'</span>,<span class="st">'People Injured'</span>,<span class="st">'Total Strikes'</span>,<span class="st">'People Killed'</span>)</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(firstYears) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'Obama (Term 1 - 2009)'</span>, <span class="st">'Obama (Term 2 - 2013)'</span>, <span class="st">'Trump (2017)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="barplot-of-totals-for-injuries-people-and-children-killed-and-strikes" class="level3">
+<h3 class="anchored" data-anchor-id="barplot-of-totals-for-injuries-people-and-children-killed-and-strikes">Barplot of totals for injuries, people and children killed and strikes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(firstYears, <span class="at">legend.text =</span> <span class="fu">rownames</span>(firstYears),</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">beside =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'skyblue'</span>,<span class="st">'cyan3'</span>,<span class="st">'royalblue'</span>,<span class="st">'darkblue'</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">args.legend =</span> <span class="fu">list</span>(<span class="at">x=</span><span class="st">'topleft'</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">'Totals'</span>,<span class="at">xlab =</span> <span class="st">'President Term'</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">'Total Kills, Injuries and Strikes During First Half of Presidential Term'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the plot, we can reveal some patterns:</p>
+<ul>
+<li><p>Children Killed: Obama 2 &lt; Trump &lt; Obama 1</p></li>
+<li><p>People Injured: Obama 1 &lt; Trump &lt; Obama 2</p></li>
+<li><p>Total Strikes: Obama 1 &lt; Obama 2 &lt; Trump</p></li>
+<li><p>People Killed: Obama 1 &lt; Trump &lt; Obama 2</p></li>
+</ul>
+</section>
+<section id="boxplot-for-strikes-and-people-killed-1st-half-of-terms" class="level3">
+<h3 class="anchored" data-anchor-id="boxplot-for-strikes-and-people-killed-1st-half-of-terms">Boxplot for Strikes and People Killed (1st Half of Terms)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Boxplot of people killed in each individual strike logged</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>Strikes <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Obama_2009_2010 =</span> Obama1_first_half<span class="sc">$</span>Average.number.of.strikes, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Obama_2013_2014 =</span> Obama2_first_half<span class="sc">$</span>Average.number.of.strikes,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Trump_2017_2018 =</span> Trump_first_half<span class="sc">$</span>Average.number.of.strikes)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Strikes, <span class="at">col =</span> <span class="st">'orchid4'</span>, <span class="at">main =</span> <span class="st">'Average Strike Count by Presidential Term'</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Presidential Term"</span>, <span class="at">ylab =</span> <span class="st">"Average Strike Count Per Attack"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Boxplot of people killed in each individual strike logged</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>Killed <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Obama_2009_2010 =</span> Obama1_first_half<span class="sc">$</span>Average.people.killed, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Obama_2013_2014 =</span> Obama2_first_half<span class="sc">$</span>Average.people.killed,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Trump_2017_2018 =</span> Trump_first_half<span class="sc">$</span>Average.people.killed)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Killed, <span class="at">col =</span> <span class="st">'orchid4'</span>, <span class="at">main =</span> <span class="st">'Average People Killed Per Strike by Presidential Term'</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Presidential Term"</span>, <span class="at">ylab =</span> <span class="st">"Average People Killed Per Attack"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="anova-for-strikes-in-full-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="anova-for-strikes-in-full-dataset">ANOVA for Strikes in Full Dataset</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>by_avg_strike_count <span class="ot">&lt;-</span> <span class="fu">aov</span>(Average.number.of.strikes <span class="sc">~</span> <span class="fu">factor</span>(president), <span class="at">data =</span> yemen)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(by_avg_strike_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Average.number.of.strikes ~ factor(president), data = yemen)
+
+$`factor(president)`
+                                           diff        lwr       upr     p adj
+Barack Obama(2)-Barack Obama (1)    -0.44030951 -1.1960679 0.3154489 0.4358948
+Donald Trump-Barack Obama (1)        1.05887933  0.1368367 1.9809219 0.0170278
+George W. Bush (1)-Barack Obama (1) -0.53813559 -6.5912099 5.5149387 0.9957285
+Donald Trump-Barack Obama(2)         1.49918884  0.6016701 2.3967075 0.0001254
+George W. Bush (1)-Barack Obama(2)  -0.09782609 -6.1472133 5.9515611 0.9999738
+George W. Bush (1)-Donald Trump     -1.59701493 -7.6694178 4.4753880 0.9049479</code></pre>
+</div>
+</div>
+</section>
+<section id="anova-for-people-killed-in-full-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="anova-for-people-killed-in-full-dataset">ANOVA for People Killed in Full Dataset</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>by_avg_ppl_count <span class="ot">&lt;-</span> <span class="fu">aov</span>(Average.people.killed <span class="sc">~</span> <span class="fu">factor</span>(president), <span class="at">data =</span> yemen)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(by_avg_ppl_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Average.people.killed ~ factor(president), data = yemen)
+
+$`factor(president)`
+                                          diff        lwr        upr     p adj
+Barack Obama(2)-Barack Obama (1)    -2.8637313  -5.235218 -0.4922442 0.0106317
+Donald Trump-Barack Obama (1)       -3.7190741  -6.612343 -0.8258053 0.0055242
+George W. Bush (1)-Barack Obama (1) -1.5847458 -20.578630 17.4091390 0.9964608
+Donald Trump-Barack Obama(2)        -0.8553429  -3.671658  1.9609727 0.8615358
+George W. Bush (1)-Barack Obama(2)   1.2789855 -17.703330 20.2613006 0.9981247
+George W. Bush (1)-Donald Trump      2.1343284 -16.920208 21.1888643 0.9915557</code></pre>
+</div>
+</div>
+</section>
+<section id="anova-for-strikes-in-1st-half-of-presidency-2009-2020" class="level3">
+<h3 class="anchored" data-anchor-id="anova-for-strikes-in-1st-half-of-presidency-2009-2020"><strong>ANOVA for Strikes in 1st Half of Presidency (2009-2020)</strong></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>AveKilled <span class="ot">&lt;-</span> <span class="fu">c</span>(Obama1_first_half<span class="sc">$</span>Average.people.killed, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>               Obama2_first_half<span class="sc">$</span>Average.people.killed,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>               Trump_first_half<span class="sc">$</span>Average.people.killed)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>AveStrike <span class="ot">&lt;-</span> <span class="fu">c</span>(Obama1_first_half<span class="sc">$</span>Average.number.of.strikes, </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>               Obama2_first_half<span class="sc">$</span>Average.number.of.strikes,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>               Trump_first_half<span class="sc">$</span>Average.number.of.strikes)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>pres <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">'Obama1'</span>,<span class="dv">10</span>),<span class="fu">rep</span>(<span class="st">'Obama2'</span>,<span class="dv">59</span>),<span class="fu">rep</span>(<span class="st">'Trump'</span>,<span class="dv">65</span>))</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>anovaStrike <span class="ot">&lt;-</span> <span class="fu">aov</span>(AveStrike <span class="sc">~</span> pres)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anovaStrike)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)  
+pres          2   98.8   49.41   4.052 0.0196 *
+Residuals   131 1597.4   12.19                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(anovaStrike)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = AveStrike ~ pres)
+
+$pres
+                   diff         lwr       upr     p adj
+Obama2-Obama1 -2.540678 -5.37164560 0.2902897 0.0882111
+Trump-Obama1  -1.030769 -3.84273687 1.7811984 0.6607610
+Trump-Obama2   1.509909  0.02135498 2.9984625 0.0459835</code></pre>
+</div>
+</div>
+</section>
+<section id="anova-for-average-people-killed-in-1st-half-of-presidency-2009-2020" class="level3">
+<h3 class="anchored" data-anchor-id="anova-for-average-people-killed-in-1st-half-of-presidency-2009-2020"><strong>ANOVA for Average People Killed in 1st Half of Presidency (2009-2020)</strong></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>anovaKilled <span class="ot">&lt;-</span> <span class="fu">aov</span>(AveKilled <span class="sc">~</span> pres)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anovaKilled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)  
+pres          2    493  246.54   3.892 0.0228 *
+Residuals   131   8298   63.34                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(anovaKilled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = AveKilled ~ pres)
+
+$pres
+                   diff        lwr        upr     p adj
+Obama2-Obama1 -6.111017 -12.563362  0.3413278 0.0674716
+Trump-Obama1  -7.503846 -13.912886 -1.0948062 0.0172602
+Trump-Obama2  -1.392829  -4.785543  1.9998843 0.5950497</code></pre>
+</div>
+</div>
+<p>We can see that, at a 0.05 significance level, there is evidence to suggest a difference in the average people killed per strike over the different presidential terms. Thus, rejecting our null hypothesis.</p>
+<p>Specifically, the Tukey Test shows a significant difference between Trump and Obama’s First Term. During the first two years of each term, strikes on average killed more people during Obama’s term in 2009-2010 than Trump’s in 2017-2018.</p>
+<p>There was not a significance difference for average people killed per strike between Obama’s two terms and Obama’s second term and Trump’s.</p>
+<p>We can see the highest number of strikes occurred early in Trump’s term compared to Obama’s terms. Yet, when we compare how many people were killed per strike, Obama’s first term produced a higher average.</p>
+</section>
+<section id="time-series-plots-of-number-of-strikes-and-people-killed" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-plots-of-number-of-strikes-and-people-killed">Time Series Plots of Number of Strikes and People Killed</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span><span class="fu">ggplot</span>(yemen[<span class="dv">2</span><span class="sc">:</span><span class="dv">324</span>,], </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Date,  <span class="at">y =</span> Average.number.of.strikes, <span class="at">fill =</span> president)) <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>, <span class="at">width =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">'forestgreen'</span>,<span class="st">'firebrick'</span>,<span class="st">'darkblue'</span>),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'Obama Term 1'</span>,<span class="st">'Obama Term 2'</span>,<span class="st">'Trump'</span>))<span class="sc">+</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Total Strikes From 2009-2020'</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">'Date'</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Total Strikes'</span>,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">'President'</span>)<span class="sc">+</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(g)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>g<span class="ot">&lt;-</span><span class="fu">ggplot</span>(yemen[<span class="dv">2</span><span class="sc">:</span><span class="dv">324</span>,], </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Date,  <span class="at">y =</span> Average.people.killed, <span class="at">fill =</span> president)) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>, <span class="at">width =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">'forestgreen'</span>,<span class="st">'firebrick'</span>,<span class="st">'darkblue'</span>),</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'Obama Term 1'</span>,<span class="st">'Obama Term 2'</span>,<span class="st">'Trump'</span>))<span class="sc">+</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Total Killed From 2009-2020'</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">'Date'</span>,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Total People Killed'</span>,</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">'President'</span>)<span class="sc">+</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(g)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The time series plots include all of the available data in the Yemen drone strike dataset (up until 06/24/2019).</p>
+<p>We can see a massive spike in strikes when Donald Trump took office. Similarly, we can see a large spike early in Obama’s first term.</p>
+<p>For people killed per strike, we see a negative trend throughout Obama’s first term but a slight positive trend in his second term. Trump’s strikes had many deaths in 2017-2018.</p>
+<p>In further studies, we could complete the time series from the full terms of each president to see the final trends.</p>
+</section>
+</section>
+<section id="hypothesis-2" class="level1">
+<h1>Hypothesis 2</h1>
+<p><strong>Ho</strong>: There is no difference in the impact and amount of strikes year-to-year.</p>
+<p><strong>Ha</strong>: There is a difference in the impact and amount of strikes year-to-year.</p>
+<section id="min-and-max-number-of-strikes-per-year" class="level3">
+<h3 class="anchored" data-anchor-id="min-and-max-number-of-strikes-per-year">Min and Max number of strikes per year</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>strike_by_year <span class="ot">&lt;-</span> yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_strikes =</span> <span class="fu">sum</span>(Maximum.number.of.strikes),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_strikes =</span> <span class="fu">sum</span>(Minimum.number.of.strikes),</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">avg_strikes =</span> <span class="fu">sum</span>(Average.number.of.strikes))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(strike_by_year, <span class="fu">aes</span>(<span class="at">x =</span> Year)) <span class="sc">+</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Year, <span class="at">y =</span> min_strikes, <span class="at">yend =</span> max_strikes), <span class="at">color =</span> <span class="st">"grey"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> min_strikes), <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> max_strikes), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Estimated Strikes Per Year"</span>,</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Strike Range (Min to Max)"</span>) <span class="sc">+</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This graph shows the minimum (blue) and maximum (red) strikes per year. The highest are in 2012 (end of Obama’s first term) and 2017 (beginning of Trump’s term).</p>
+</section>
+<section id="min-and-max-people-killed-per-year" class="level3">
+<h3 class="anchored" data-anchor-id="min-and-max-people-killed-per-year">Min and Max people killed per year</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>victim_by_year <span class="ot">&lt;-</span> yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_count =</span> <span class="fu">sum</span>(Maximum.people.killed),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">min_count =</span> <span class="fu">sum</span>(Minimum.people.killed),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">avg_count =</span> <span class="fu">sum</span>(Average.people.killed))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(victim_by_year, <span class="fu">aes</span>(<span class="at">x =</span> Year)) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> Year, <span class="at">y =</span> min_count, <span class="at">yend =</span> max_count), <span class="at">color =</span> <span class="st">"grey"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> min_count), <span class="at">color =</span> <span class="st">"darkblue"</span>, <span class="at">size =</span> <span class="fl">4.5</span>) <span class="sc">+</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> max_count), <span class="at">color =</span> <span class="st">"darkred"</span>, <span class="at">size =</span> <span class="fl">4.5</span>) <span class="sc">+</span> </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Estimated People Killed Per Year"</span>,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Victim Count Range (Min to Max)"</span>) <span class="sc">+</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here, you can see the minimum and maximum people killed per year. While 2012 shows a high strike count and death count, 2017 does not, as the number of deaths in 2017 is not much higher that the average throughout the years.</p>
+</section>
+<section id="time-series-of-type-of-victim-per-year" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-of-type-of-victim-per-year">Time series of type of victim per year</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>yemen<span class="sc">$</span>Year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(yemen<span class="sc">$</span>Year)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Year, Average.people.killed, Average.civilians.reported.killed, Average.children.reported.killed, Average.number.of.strikes) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">&gt;</span> <span class="dv">2002</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">`</span><span class="at">People Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(Average.people.killed),</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Civilians Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(Average.civilians.reported.killed),</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Children Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(Average.children.reported.killed))</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>data_long2 <span class="ot">&lt;-</span> <span class="fu">melt</span>(data2, <span class="at">id.vars =</span> <span class="st">"Year"</span>, </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable.name =</span> <span class="st">"Metric"</span>, </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">value.name =</span> <span class="st">"Value"</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_long2, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> Value, <span class="at">color =</span> Metric)) <span class="sc">+</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Estimated Total Victims By Type Per Year (2009-2019)"</span>,</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Total"</span>,</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Victim Type"</span></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fu">min</span>(yemen<span class="sc">$</span>Year), <span class="fu">max</span>(yemen<span class="sc">$</span>Year), <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Looking at the year-to-year impact of strikes, you can see a spike in casualties in 2012, which lines up with the higher number of strikes that year. This suggests that more strikes generally lead to more deaths.</p>
+<p>But 2017 is an exception — despite more strikes, the number of people killed didn’t increase much, possibly indicating less effective attacks.</p>
+<p>Civilian and child casualties, while smaller overall, also peaked in 2012 and 2017. Interestingly, 2012 seemed to have had more “successful” strikes, with fewer civilian casualties compared to militant targets.</p>
+</section>
+<section id="time-series-of-average-victims-by-per-atack-by-type-per-year" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-of-average-victims-by-per-atack-by-type-per-year">Time Series of Average Victims By Per Atack By Type Per Year</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> yemen <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">&gt;</span> <span class="dv">2002</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Year, Average.people.killed, Average.civilians.reported.killed, Average.children.reported.killed, Average.number.of.strikes) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">`</span><span class="at">People Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(Average.people.killed),</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Civilians Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(Average.civilians.reported.killed),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Children Killed</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">mean</span>(Average.children.reported.killed))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>data_long3 <span class="ot">&lt;-</span> <span class="fu">melt</span>(data3, <span class="at">id.vars =</span> <span class="st">"Year"</span>, </span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">variable.name =</span> <span class="st">"Metric"</span>, </span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">value.name =</span> <span class="st">"Value"</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_long3, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> Value, <span class="at">color =</span> Metric)) <span class="sc">+</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Victims By Per Attack By Type Per Year (2009-2019)"</span>,</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Estimated Average, Per Record"</span>,</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Victim Type"</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fu">min</span>(yemen<span class="sc">$</span>Year), <span class="fu">max</span>(yemen<span class="sc">$</span>Year), <span class="at">by =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We analyzed average casualties per attack to assess strike efficiency over the years. While 2012 and 2017 saw spikes in strike activity, their average casualties per attack were similar to other years, with a slight downward trend, possibly due to improved tactics in Yemen.</p>
+<p>In 2009, with only three recorded attacks, one caused unusually high casualties, skewing the averages. This likely reflects early, incomplete strike documentation.</p>
+<p>Overall, 2009 marked high casualties despite few strikes, 2012 saw a surge in strikes with proportionally fewer civilian casualties, and 2017 had more strikes but fewer casualties, suggesting less effective attacks.</p>
+</section>
+</section>
+<section id="hypothesis-3" class="level1">
+<h1>Hypothesis 3</h1>
+<p><strong>Ho</strong>: There is no difference in the impact and amount as it relates to location in Yemen.</p>
+<p><strong>Ha</strong>: There is a difference in the impact and amount as it relates to location in Yemen.</p>
+<section id="table-of-total-kills-per-province" class="level3">
+<h3 class="anchored" data-anchor-id="table-of-total-kills-per-province">Table of total kills per province</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>total <span class="ot">=</span> yemen <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Province) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">total_kills =</span> <span class="fu">sum</span>(Average.people.killed))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  Province                total_kills
+  &lt;chr&gt;                         &lt;dbl&gt;
+1 " Bayda"                       30.5
+2 "-"                             0  
+3 "Abyan"                       675  
+4 "Abyan "                        2  
+5 "Across Yemen"                  0  
+6 "Across central Yemen "         7  </code></pre>
+</div>
+</div>
+</section>
+<section id="comparative-bar-chart-of-civilians-vs-people-killed-for-provinces-with-high-strikes" class="level3">
+<h3 class="anchored" data-anchor-id="comparative-bar-chart-of-civilians-vs-people-killed-for-provinces-with-high-strikes">Comparative bar chart of civilians vs people killed, for provinces with high strikes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>grouped <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(total_kills <span class="sc">~</span> Province, <span class="at">data =</span> total, sum)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(grouped<span class="sc">$</span>total_kills, <span class="at">names.arg =</span> grouped<span class="sc">$</span>Province, <span class="at">main =</span> <span class="st">"Total Average Kills by Province"</span>, <span class="at">ylab =</span> <span class="st">"Total Sum"</span>, <span class="at">las =</span> <span class="dv">2</span>, <span class="at">srt =</span> <span class="dv">35</span>, <span class="at">cex.names =</span> <span class="fl">0.5</span>, <span class="at">col =</span> <span class="st">"skyblue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3-project_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>selected <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Abyan"</span>, <span class="st">"Bayda"</span>, <span class="st">"Hadramout"</span>, <span class="st">"Marib"</span>, <span class="st">"Shabwa"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="ot">&lt;-</span> yemen[yemen<span class="sc">$</span>Province <span class="sc">%in%</span> selected, ]</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>filtered_table <span class="ot">=</span> filtered_data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Province) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">total_kills =</span> <span class="fu">sum</span>(Average.people.killed), <span class="at">civilians_killed =</span> <span class="fu">sum</span>(Average.civilians.reported.killed))</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>filtered_table <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Province"</span>, <span class="st">"People Killed"</span>, <span class="st">"Civilians Killed"</span>), <span class="at">caption =</span> <span class="st">"Table of People Killed and Civilians Killed by Province"</span>, <span class="at">align =</span> <span class="fu">c</span>(<span class="st">'l'</span>, <span class="st">'c'</span>, <span class="st">'c'</span>)) <span class="sc">%&gt;%</span> <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>)) <span class="sc">%&gt;%</span> <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">background =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small" data-quarto-postprocess="true">
+<caption>Table of People Killed and Civilians Killed by Province</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: black !important; background-color: white !important;">Province</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-weight: bold; color: black !important; background-color: white !important;">People Killed</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-weight: bold; color: black !important; background-color: white !important;">Civilians Killed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Abyan</td>
+<td style="text-align: center;">675.0</td>
+<td style="text-align: center;">125.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bayda</td>
+<td style="text-align: center;">237.5</td>
+<td style="text-align: center;">65.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hadramout</td>
+<td style="text-align: center;">134.0</td>
+<td style="text-align: center;">10.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Marib</td>
+<td style="text-align: center;">114.5</td>
+<td style="text-align: center;">14.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shabwa</td>
+<td style="text-align: center;">264.0</td>
+<td style="text-align: center;">14.5</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>In the barplot entitled “Total Average Kills by Province”, we see that the provinces Abyan, Bayda, Hadramout, Marib, and Shabwa have the most number of kills, while the rest of the provinces see fewer amounts of kills.</p>
+<p>The “Table of People Killed and Civilians Killed by Province” implies that while these provinces have a very high number of people killed, most were not civilians.</p>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>This analysis examines U.S. drone strikes in Yemen across administrations, regions, and years, highlighting key patterns and implications. Strikes peaked during Trump’s first term, while Obama’s first term saw the highest fatalities per strike. Notable spikes occurred in 2012 and 2017, likely tied to aggressive early-term military strategies and regional unrest. Regions like Abyan experienced the highest casualties, reflecting AQAP activity and counterterrorism focus.</p>
+<p>Despite increased strikes in 2012, civilian and child casualties were relatively low, suggesting efforts to minimize collateral damage. However, the analysis is limited by the dataset ending in mid-2019 and a lack of detailed variables like drone type or specific strike goals. Broader influences such as shifts in political power and international dynamics were not fully considered.</p>
+<p>The findings highlight the need for more comprehensive research to understand the long-term impacts and driving factors behind U.S. drone operations in Yemen.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>© 2024, Fathima Shaikh</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

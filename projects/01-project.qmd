@@ -1,14 +1,12 @@
 ---
-title: College Expense Prediction
-subtitle: This project predicts college attendance costs using factors like private status, out-of-state enrollment, and student population, with a random forest model performing best. 
+title: College Expense Prediction (Code Displayed and Interpreted) 
+subtitle: This project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. 
 images: image/college-expense.jpeg
 toc: false
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#options(repos = c(CRAN = "https://cran.rstudio.com"))
-#install.packages("tree")
 library(tree)
 library(randomForest)
 library(ggplot2)  
@@ -20,122 +18,136 @@ set.seed(11281975)
 index =sample(nrow(College), 2100,replace = FALSE)
 C.train=College[index,]
 C.test=College[-index,]
+head(College)
+```
+```{r}
+UniqueCount <- sapply(College, function(x) length(unique(x)))
+FirstFewValues <- sapply(College, function(x) paste0(head(x, 5), collapse = ", "))
+
+df.unique <- data.frame(
+  Column = names(UniqueCount),
+  UniqueCount = UniqueCount,
+  FirstFewValues = FirstFewValues,
+  row.names = NULL
+)
+
+df.unique
+```
+
+```{r}
 dim(C.train)
 dim(C.test)
+
+sum(is.na(College))
 ```
+There are 2100 training data points and 900 testing data points, each with 18 predictors, and no NA values.
 
-# Q1 
-
-# A
-```{r}
-table(C.train$Private)
-table(C.test$Private)
-
-prop.table(table(C.train$Private))
-prop.table(table(C.test$Private))
-```
-# B
+## Here, we'll use a classification tree to find the most important variables in predicting the response (Private Status, in this case)
 ```{r}
 C.train$Private <- as.factor(C.train$Private)
 levels(C.test$Private) <- levels(C.train$Private)
 tree_model <- tree(Private ~., data = C.train)
 summary(tree_model)
 ```
-## i. 
-9 predictors used: "F.Undergrad","Outstate","Terminal","Top10perc","Grad.Rate","PhD","Top25perc","Expend","Accept"
 
-## ii. 17 terminal nodes 
+9 predictors used in the tree model: 
+- "F.Undergrad" (Number of full-time undergraduates)
+- "Outstate"
+- "Terminal" (Percent of faculty with terminal degree)
+- "Top10perc" (New students from top 10% of high school class)
+- "Grad.Rate"
+- "PhD"
+- "Top25perc"
+- "Expend"
+- "Accept" (Number of applicants accepted)
 
-## iii. MCR: 0.01762
+These variables are what the classification tree identified as most important in predicting if the school is private or not. 
 
-## iv. 
+17 terminal nodes means the tree splits the data into 17 distinct groups or "leaves" based on the values of the predictor variables. This amount makes for an interpretable model. 
+
+Misclassification Rate (MCR) of 17.62% is the percentage that the model did not predict correctly.
+
+## Make predictions with the testing data
 ```{r}
 test_predictions <- predict(tree_model, C.test, type = "class")
 table(C.test$Private, test_predictions)
 ```
 
 ```{r}
-(4+8)/(234 + 8 + 4 + 652)
+(4+8)/(236 + 8 + 4 + 652)
 ```
-The testing MCR is 1.33%.
+The testing MCR for the tree model is 1.33%.
 
-# C. 
+
+## Find the optimal size of the tree to find the balance between simplicity and accuracy
 ```{r}
-# Plot size vs deviance to visualize the optimal cp for pruning
+# Reduce the number of terminal nodes (pruning)
 cv_tree <- cv.tree(tree_model, FUN = prune.misclass)
 plot(cv_tree$size, cv_tree$dev, type = "b")
 ```
+Optimal Size: 15
 
-Size of pruned tree: 15
-
-# D.
 ```{r}
 prune_model <- prune.misclass(tree_model, best = 15)
-plot(prune_model)
-text(prune_model, pretty = 0)
+par(mar = c(1, 1, 1, 1))  
+plot(prune_model, cex = 1.2)
+text(prune_model, pretty = 100, cex = 0.5)  
 ```
-
+Tree models are basically just a yes/no decision tree but with an entire dataset! Now you can see how the dataset is split into subsets based on the values of predictors to predict the response. 
 ```{r}
 summary(prune_model)
 ```
-The MCR of the pruned model is 18.1%.
+The MCR of the pruned model is 18.1%. The MCR is slightly higher here than with 17 terminal nodes, and it illustrates the trade off between simplicity and accuracy. 
 
-# E
+## Make predictions with the pruned model
 ```{r}
 test_predictions <- predict(prune_model, newdata = C.test,type = "class")
 table(test_predictions, C.test$Private)
 ```
-```{r}
-(8 + 7)/(236 + 7 + 8 + 649)
-```
-The MCR is 1.66%.
-
-# 2
-
-# A. 
-
-## i. 
-```{r}
-summary(C.train$Expend)
-```
 
 ```{r}
-summary(C.test$Expend)
+(8 + 12)/(236 + 12 + 8 + 644)
 ```
+The MCR is 2.22%. This is a huge improvement!
 
-## ii.
+## Moving on to a different response variable: Expend (College Attendance Expenditures)
 ```{r}
 ggplot(C.train,aes(x = Expend))+geom_density(fill = "blue", alpha = 0.5)+labs(title = "Density Plot of Expend",x = "Expend",y = "Density")+theme_minimal()
 ```
+The highest percentage of people are spending around $8K for college per year. 
 
-### iii.
+## Do a log transformation on the response
 ```{r}
 C.train$Expend <-log(C.train$Expend)
 C.test$Expend <-log(C.test$Expend)
-ggplot(C.train,aes(x = Expend))+geom_density(fill = "blue", alpha = 0.5)+labs(title = "Density Plot of Log(Expend)",x = "Expend",y = "Density")+theme_minimal()
 ```
 
-# B. 
+## Create a tree model to predict log(Expend)
 ```{r}
-# Create a tree model to predict log(Expend)
 log_tree_model <- tree(Expend ~ ., data = C.train)
 summary(log_tree_model)
 ```
 
-i.5 predictors used for the model: "Outstate"  "S.F.Ratio" "Enroll"  "Top10perc" "Top25perc"
+7 predictors used for the model: 
+- "Outstate"
+- "S.F.Ratio" 
+- "F.Undergrad"
+- "PhD"
+- "Room.Board"
+- "Top10perc" 
+- "Top25perc"
 
-ii. 11 terminal nodes
+14 terminal nodes
 
-iii. 
+## Make predictions and find MSE's for training and testing data
 ```{r}
 train_predictions <- predict(log_tree_model, data = C.train)
 train_residuals <- C.train$Expend - train_predictions
 mean(train_residuals^2)
 ```
 
-Training MSE:  0.04187042
+Training MSE:  0.0148%
 
-iv.
 ```{r}
 C.test$Private <- as.factor(C.test$Private)
 test_predictions <- predict(log_tree_model, newdata = C.test)
@@ -143,75 +155,74 @@ test_residuals <- C.test$Expend - test_predictions
 mse_test <- mean(test_residuals^2)
 mse_test
 ```
-Testing MSE: 0.04207581
+Testing MSE: 0.0146%
 
-# C
+## Find the optimal size
 ```{r}
 cv_tree_2 <- cv.tree(log_tree_model)
 plot(cv_tree_2$size, cv_tree_2$dev, type = "b")
 ```
-Size of pruned tree: 14
+Optimal size: 14
 
-# D
+## Plot the pruned tree model
 ```{r}
-#Plot pruned tree model
 prune_log_model <- prune.tree(log_tree_model, best = 14)
-plot(prune_log_model)
-text(prune_log_model, pretty = 0)
+par(mar = c(1, 1, 1, 1))  
+plot(prune_log_model, cex = 1.2)
+text(prune_log_model, pretty = 10, cex = 0.7)
 ```
-
+## Find predictions and MSE's
 ```{r}
-# Training MSE of pruned tree
 train_predictions <- predict(prune_log_model, data = C.train)
 train_residuals <- C.train$Expend - train_predictions
 mean(train_residuals^2)
 ```
-Training MSE of pruned tree model: 0.04187042
+Training MSE of pruned tree model: 0.0144%
 
-# E
 ```{r}
-#Predict log(Expend) with testing data
 test_predictions <- predict(prune_log_model, newdata = C.test)
 test_residuals <- C.test$Expend - test_predictions
 mean(test_residuals^2)
 ```
-Testing MSE: 0.04207581
+Testing MSE: 0.0146%
 
-# F
 ```{r}
 (cor(train_predictions, C.train$Expend))^2
 ```
 The r squared of the training data of 75.14%
+
 ```{r}
 (cor(test_predictions, C.test$Expend))^2
 ```
 The r squared of the testing data is 74.6%
 
-# 3
+Both R^2 values are decently high, so around 75% of the variation in the data is explained by the model.
 
-# A
+## Now, we'll create a bagging model
+Bagging involves training multiple copies of the same model on different subsets of the data, and this helps to reduce overfitting, it makes the model more robust, and it can give a more stable and accurate prediction than a single model. 
 ```{r}
-set.seed(705780612)
-# Create a bagging model
+set.seed(123)
 C.train$Private <- as.factor(C.train$Private)
-bagging <- randomForest(Private ~., data = C.train, mtry = 17, importance = TRUE)
+bagging <- randomForest(Private ~., data = C.train, mtry = 17, importance = TRUE) # mtrry = 17 because that is the total number of features
 bagging
 ```
 
-## i.
 ```{r}
 importance(bagging)
 ```
+- In the first 2 columns, higher values reveal that the variable was more useful in differentiating between "No" (not private) and "Yes" (private).
+- MeanDecreaseAccuracy quantifies how much the model’s accuracy decreases when the values of a specific variable are made "less useful" while keeping all other variables the same. Books has a lower MeanDecreaseAccuracy (21.09), so it's less critical for accurate predictions.
+- Variables with a higher MeanDecreaseGini are more important for splitting the data into homogenous groups such as distinguishing between private and not-private. F.Undergrad (379.39) is key for keeping the nodes pure in the trees.
 
-## ii.
 ```{r}
 # Plot variable importance
 varImpPlot(bagging)
 ```
-The most importance variables is "Outstate".
+From the plot, the most important variable is "Outstate" based on MeanDecreaseAccuracy.
 
-## iii.
+## Make predictions and find the MCR
 ```{r}
+set.seed(123)
 # Report testing MCR
 predictions <- predict(bagging, newdata = C.test)
 actual <- C.test$Private  
@@ -220,13 +231,14 @@ misclassification_rate
 ```
 The testing MCR is 0.11%
  
-# B. 
+## Create a random forest model on the response variable "Private" with mtry = 4 (less features than bagging)
+In Bagging, each tree would consider all features to choose the best split at each node. In Random Forests, each tree only considers a random subset of features at each split, leading to extra randomness. This randomness makes the trees different and reduces correlation.
 ```{r}
-# Create a random forest model with mtry = 4
+set.seed(123)
 rf <- randomForest(Private ~., data = C.train, mtry = 4, importance = TRUE)
 rf
 ```
-
+## Make predictions and find the MCR
 ```{r}
 # Report testing MCR
 predictions.2 <- predict(rf, newdata = C.test)
@@ -235,55 +247,49 @@ misclassification_rate
 ```
 The testing MCR is 0.33%
 
-# 4
-
-# A.
+## Try out a bagging model on the "Expend" response variable
 ```{r}
-# Create a bagging model to predict logExpend
+set.seed(123)
 log_bagging <- randomForest(Expend ~., data = C.train, mtry = 17, importance = TRUE)
 log_bagging
 ```
 
-## i.
 ```{r}
-# Report important variables
 importance(log_bagging)
 ```
+The importance plot looks a little different here because of the nature of the response variable "expend". 'Outstate' (126.625) and student-faculty ratio 'S.F.Ratio' (134.729) have the highest %IncMSE, showing that they significantly reduce prediction error. These variables also have high IncNodePurity, showing they contribute heavily to reducing node variance.
 
-## ii.
 ```{r}
 # Plot variable importance
 varImpPlot(log_bagging)
 ```
-The most importance predictor based on %IncMSE is S.F ratio
+S.F ratio is the most important in terms of impacting the MSe and Outstate reduces node variance the most.
 
-## iii.
+## Make predictions and find MSE
 ```{r}
-# Predict log(Expend) with testing data 
 test_predictions.2 <- predict(log_bagging, newdata = C.test)
 test_residuals <- C.test$Expend - test_predictions.2
 mean(test_residuals^2)
 ```
-The testing MSE 0.218%
+The testing MSE 0.0000923%
 
-## iv.
-The R squared of the model is 97.73%
+The R squared of the model is 97.73%. So almost 98% of the variation in the data is explained by the model!
 
-# B
+## Test a random forest with the response "Expend"
 ```{r}
+set.seed(123)
 log_bagging_4 <-randomForest(Expend~., data = C.train, mtry = 4, importance = TRUE)
 log_bagging_4
 ```
+
+## Make predictions and find the MSE
 ```{r}
 predictions.3 <- predict(log_bagging_4, newdata = C.test)
 mean((predictions.3 - C.test$Expend)^2)
 ```
-The MCR is 0.21%
+The MSE is 0.0000870%
 
-# C
-The R squared is 97.9%
-
-# D. 
+The R squared is 97.7%
 ```{r}
 C.test$pred <- predictions.3
 ggplot(C.test,aes(x = Expend, y = predictions.3))+geom_point(color = "green", alpha = 0.6)+ # Scatter plot

@@ -1,9 +1,0 @@
----
-toc: false
----
-
-## Project 1
-
-Here is [project 1](/projects/01-project.qmd)
-
-## Project 2

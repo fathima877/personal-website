@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>College Expense Prediction – Fathima Shaikh</title>
+<title>College Expense Prediction (Code Displayed and Interpreted) – Fathima Shaikh</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -151,8 +151,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">College Expense Prediction</h1>
-<p class="subtitle lead">This project predicts college attendance costs using factors like private status, out-of-state enrollment, and student population, with a random forest model performing best.</p>
+<h1 class="title">College Expense Prediction (Code Displayed and Interpreted)</h1>
+<p class="subtitle lead">This project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best.</p>
 </div>
 
 
@@ -175,54 +175,87 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>index <span class="ot">=</span><span class="fu">sample</span>(<span class="fu">nrow</span>(College), <span class="dv">2100</span>,<span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>C.train<span class="ot">=</span>College[index,]</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>C.test<span class="ot">=</span>College[<span class="sc">-</span>index,]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(C.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(College)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Private Apps Accept Enroll Top10perc Top25perc F.Undergrad P.Undergrad
+1     Yes  996    866    377        29        58        1411          72
+2     Yes  548    428    167        18        46         618         113
+3     Yes  450    430    125        20        46         488          43
+4     Yes 1470   1199    425        21        76        1820         558
+5     Yes 1465    810    313        71        95        1088          16
+6     Yes  417    349    137        60        89         510          63
+  Outstate Room.Board Books Personal PhD Terminal S.F.Ratio perc.alumni
+1    12065       3615   430      685  62       78      12.5          41
+2     8958       3670   300     1000  53       59      15.3          26
+3     9950       3920   300     1300  76       76      11.8          25
+4    11040       4840   400      900  89       92      13.3          28
+5    18165       6750   500     1200 100      100      12.3          49
+6    12960       5450   450      875  92       97       7.7          37
+  Grad.Rate Expend
+1        80   8596
+2        64   9798
+3        47   9466
+4        94   8118
+5        89  17449
+6        59  19016</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>UniqueCount <span class="ot">&lt;-</span> <span class="fu">sapply</span>(College, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x)))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>FirstFewValues <span class="ot">&lt;-</span> <span class="fu">sapply</span>(College, <span class="cf">function</span>(x) <span class="fu">paste0</span>(<span class="fu">head</span>(x, <span class="dv">5</span>), <span class="at">collapse =</span> <span class="st">", "</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.unique <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column =</span> <span class="fu">names</span>(UniqueCount),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">UniqueCount =</span> UniqueCount,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">FirstFewValues =</span> FirstFewValues,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">NULL</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>df.unique</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Column UniqueCount                  FirstFewValues
+1      Private           2         Yes, Yes, Yes, Yes, Yes
+2         Apps         617       996, 548, 450, 1470, 1465
+3       Accept         605        866, 428, 430, 1199, 810
+4       Enroll         518         377, 167, 125, 425, 313
+5    Top10perc          80              29, 18, 20, 21, 71
+6    Top25perc          89              58, 46, 46, 76, 95
+7  F.Undergrad         619      1411, 618, 488, 1820, 1088
+8  P.Undergrad         507            72, 113, 43, 558, 16
+9     Outstate         568 12065, 8958, 9950, 11040, 18165
+10  Room.Board         487    3615, 3670, 3920, 4840, 6750
+11       Books         108         430, 300, 300, 400, 500
+12    Personal         268      685, 1000, 1300, 900, 1200
+13         PhD          77             62, 53, 76, 89, 100
+14    Terminal          63             78, 59, 76, 92, 100
+15   S.F.Ratio         167    12.5, 15.3, 11.8, 13.3, 12.3
+16 perc.alumni          61              41, 26, 25, 28, 49
+17   Grad.Rate          79              80, 64, 47, 94, 89
+18      Expend         650   8596, 9798, 9466, 8118, 17449</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(C.train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2100   18</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(C.test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(C.test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 900  18</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(College))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
 </div>
-<section id="q1" class="level1">
-<h1>Q1</h1>
-</section>
-<section id="a" class="level1">
-<h1>A</h1>
+</div>
+<p>There are 2100 training data points and 900 testing data points, each with 18 predictors, and no NA values.</p>
+<section id="here-well-use-a-classification-tree-to-find-the-most-important-variables-in-predicting-the-response-private-status-in-this-case" class="level2">
+<h2 class="anchored" data-anchor-id="here-well-use-a-classification-tree-to-find-the-most-important-variables-in-predicting-the-response-private-status-in-this-case">Here, we’ll use a classification tree to find the most important variables in predicting the response (Private Status, in this case)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(C.train<span class="sc">$</span>Private)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-  No  Yes 
- 507 1593 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(C.test<span class="sc">$</span>Private)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
- No Yes 
-244 656 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(C.train<span class="sc">$</span>Private))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-       No       Yes 
-0.2414286 0.7585714 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(C.test<span class="sc">$</span>Private))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-       No       Yes 
-0.2711111 0.7288889 </code></pre>
-</div>
-</div>
-</section>
-<section id="b" class="level1">
-<h1>B</h1>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.train<span class="sc">$</span>Private)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(C.test<span class="sc">$</span>Private) <span class="ot">&lt;-</span> <span class="fu">levels</span>(C.train<span class="sc">$</span>Private)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tree_model <span class="ot">&lt;-</span> <span class="fu">tree</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tree_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.train<span class="sc">$</span>Private)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(C.test<span class="sc">$</span>Private) <span class="ot">&lt;-</span> <span class="fu">levels</span>(C.train<span class="sc">$</span>Private)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>tree_model <span class="ot">&lt;-</span> <span class="fu">tree</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tree_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Classification tree:
@@ -235,21 +268,16 @@ Residual mean deviance:  0.1106 = 230.3 / 2083
 Misclassification error rate: 0.01762 = 37 / 2100 </code></pre>
 </div>
 </div>
-<section id="i." class="level2">
-<h2 class="anchored" data-anchor-id="i.">i.</h2>
-<p>9 predictors used: “F.Undergrad”,“Outstate”,“Terminal”,“Top10perc”,“Grad.Rate”,“PhD”,“Top25perc”,“Expend”,“Accept”</p>
+<p>9 predictors used in the tree model: - “F.Undergrad” (Number of full-time undergraduates) - “Outstate” - “Terminal” (Percent of faculty with terminal degree) - “Top10perc” (New students from top 10% of high school class) - “Grad.Rate” - “PhD” - “Top25perc” - “Expend” - “Accept” (Number of applicants accepted)</p>
+<p>These variables are what the classification tree identified as most important in predicting if the school is private or not.</p>
+<p>17 terminal nodes means the tree splits the data into 17 distinct groups or “leaves” based on the values of the predictor variables. This amount makes for an interpretable model.</p>
+<p>Misclassification Rate (MCR) of 17.62% is the percentage that the model did not predict correctly.</p>
 </section>
-<section id="ii.-17-terminal-nodes" class="level2">
-<h2 class="anchored" data-anchor-id="ii.-17-terminal-nodes">ii. 17 terminal nodes</h2>
-</section>
-<section id="iii.-mcr-0.01762" class="level2">
-<h2 class="anchored" data-anchor-id="iii.-mcr-0.01762">iii. MCR: 0.01762</h2>
-</section>
-<section id="iv." class="level2">
-<h2 class="anchored" data-anchor-id="iv.">iv.</h2>
+<section id="make-predictions-with-the-testing-data" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-with-the-testing-data">Make predictions with the testing data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(tree_model, C.test, <span class="at">type =</span> <span class="st">"class"</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(C.test<span class="sc">$</span>Private, test_predictions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(tree_model, C.test, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(C.test<span class="sc">$</span>Private, test_predictions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     test_predictions
        No Yes
@@ -258,36 +286,19 @@ Misclassification error rate: 0.01762 = 37 / 2100 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">4</span><span class="sc">+</span><span class="dv">8</span>)<span class="sc">/</span>(<span class="dv">234</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">652</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">4</span><span class="sc">+</span><span class="dv">8</span>)<span class="sc">/</span>(<span class="dv">236</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">652</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.01336303</code></pre>
+<pre><code>[1] 0.01333333</code></pre>
 </div>
 </div>
-<p>The testing MCR is 1.33%.</p>
+<p>The testing MCR for the tree model is 1.33%.</p>
 </section>
-</section>
-<section id="c." class="level1">
-<h1>C.</h1>
+<section id="find-the-optimal-size-of-the-tree-to-find-the-balance-between-simplicity-and-accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="find-the-optimal-size-of-the-tree-to-find-the-balance-between-simplicity-and-accuracy">Find the optimal size of the tree to find the balance between simplicity and accuracy</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot size vs deviance to visualize the optimal cp for pruning</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cv_tree <span class="ot">&lt;-</span> <span class="fu">cv.tree</span>(tree_model, <span class="at">FUN =</span> prune.misclass)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv_tree<span class="sc">$</span>size, cv_tree<span class="sc">$</span>dev, <span class="at">type =</span> <span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Size of pruned tree: 15</p>
-</section>
-<section id="d." class="level1">
-<h1>D.</h1>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>prune_model <span class="ot">&lt;-</span> <span class="fu">prune.misclass</span>(tree_model, <span class="at">best =</span> <span class="dv">15</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune_model)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune_model, <span class="at">pretty =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reduce the number of terminal nodes (pruning)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cv_tree <span class="ot">&lt;-</span> <span class="fu">cv.tree</span>(tree_model, <span class="at">FUN =</span> prune.misclass)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv_tree<span class="sc">$</span>size, cv_tree<span class="sc">$</span>dev, <span class="at">type =</span> <span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -296,8 +307,23 @@ Misclassification error rate: 0.01762 = 37 / 2100 </code></pre>
 </div>
 </div>
 </div>
+<p>Optimal Size: 15</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(prune_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>prune_model <span class="ot">&lt;-</span> <span class="fu">prune.misclass</span>(tree_model, <span class="at">best =</span> <span class="dv">15</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>))  </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune_model, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune_model, <span class="at">pretty =</span> <span class="dv">100</span>, <span class="at">cex =</span> <span class="fl">0.5</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-project_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Tree models are basically just a yes/no decision tree but with an entire dataset! Now you can see how the dataset is split into subsets based on the values of predictors to predict the response.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(prune_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Classification tree:
@@ -310,13 +336,13 @@ Residual mean deviance:  0.1375 = 286.7 / 2085
 Misclassification error rate: 0.0181 = 38 / 2100 </code></pre>
 </div>
 </div>
-<p>The MCR of the pruned model is 18.1%.</p>
+<p>The MCR of the pruned model is 18.1%. The MCR is slightly higher here than with 17 terminal nodes, and it illustrates the trade off between simplicity and accuracy.</p>
 </section>
-<section id="e" class="level1">
-<h1>E</h1>
+<section id="make-predictions-with-the-pruned-model" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-with-the-pruned-model">Make predictions with the pruned model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_model, <span class="at">newdata =</span> C.test,<span class="at">type =</span> <span class="st">"class"</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(test_predictions, C.test<span class="sc">$</span>Private)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_model, <span class="at">newdata =</span> C.test,<span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(test_predictions, C.test<span class="sc">$</span>Private)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                
 test_predictions  No Yes
@@ -325,70 +351,39 @@ test_predictions  No Yes
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">8</span> <span class="sc">+</span> <span class="dv">7</span>)<span class="sc">/</span>(<span class="dv">236</span> <span class="sc">+</span> <span class="dv">7</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">+</span> <span class="dv">649</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">8</span> <span class="sc">+</span> <span class="dv">12</span>)<span class="sc">/</span>(<span class="dv">236</span> <span class="sc">+</span> <span class="dv">12</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">+</span> <span class="dv">644</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.01666667</code></pre>
+<pre><code>[1] 0.02222222</code></pre>
 </div>
 </div>
-<p>The MCR is 1.66%.</p>
+<p>The MCR is 2.22%. This is a huge improvement!</p>
 </section>
-<section id="section" class="level1">
-<h1>2</h1>
-</section>
-<section id="a." class="level1">
-<h1>A.</h1>
-<section id="i.-1" class="level2">
-<h2 class="anchored" data-anchor-id="i.-1">i.</h2>
+<section id="moving-on-to-a-different-response-variable-expend-college-attendance-expenditures" class="level2">
+<h2 class="anchored" data-anchor-id="moving-on-to-a-different-response-variable-expend-college-attendance-expenditures">Moving on to a different response variable: Expend (College Attendance Expenditures)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(C.train<span class="sc">$</span>Expend)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3186    6863    8444    9727   10822   56233 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(C.test<span class="sc">$</span>Expend)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   3186    6704    8189    9477   10622   45702 </code></pre>
-</div>
-</div>
-</section>
-<section id="ii." class="level2">
-<h2 class="anchored" data-anchor-id="ii.">ii.</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C.train,<span class="fu">aes</span>(<span class="at">x =</span> Expend))<span class="sc">+</span><span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Density Plot of Expend"</span>,<span class="at">x =</span> <span class="st">"Expend"</span>,<span class="at">y =</span> <span class="st">"Density"</span>)<span class="sc">+</span><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C.train,<span class="fu">aes</span>(<span class="at">x =</span> Expend))<span class="sc">+</span><span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Density Plot of Expend"</span>,<span class="at">x =</span> <span class="st">"Expend"</span>,<span class="at">y =</span> <span class="st">"Density"</span>)<span class="sc">+</span><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-project_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<section id="iii." class="level3">
-<h3 class="anchored" data-anchor-id="iii.">iii.</h3>
+<p>The highest percentage of people are spending around $8K for college per year.</p>
+</section>
+<section id="do-a-log-transformation-on-the-response" class="level2">
+<h2 class="anchored" data-anchor-id="do-a-log-transformation-on-the-response">Do a log transformation on the response</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Expend <span class="ot">&lt;-</span><span class="fu">log</span>(C.train<span class="sc">$</span>Expend)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>Expend <span class="ot">&lt;-</span><span class="fu">log</span>(C.test<span class="sc">$</span>Expend)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C.train,<span class="fu">aes</span>(<span class="at">x =</span> Expend))<span class="sc">+</span><span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Density Plot of Log(Expend)"</span>,<span class="at">x =</span> <span class="st">"Expend"</span>,<span class="at">y =</span> <span class="st">"Density"</span>)<span class="sc">+</span><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Expend <span class="ot">&lt;-</span><span class="fu">log</span>(C.train<span class="sc">$</span>Expend)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>Expend <span class="ot">&lt;-</span><span class="fu">log</span>(C.test<span class="sc">$</span>Expend)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-</section>
-<section id="b." class="level1">
-<h1>B.</h1>
+<section id="create-a-tree-model-to-predict-logexpend" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-tree-model-to-predict-logexpend">Create a tree model to predict log(Expend)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a tree model to predict log(Expend)</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>log_tree_model <span class="ot">&lt;-</span> <span class="fu">tree</span>(Expend <span class="sc">~</span> ., <span class="at">data =</span> C.train)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(log_tree_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>log_tree_model <span class="ot">&lt;-</span> <span class="fu">tree</span>(Expend <span class="sc">~</span> ., <span class="at">data =</span> C.train)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(log_tree_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Regression tree:
@@ -402,40 +397,57 @@ Distribution of residuals:
 -0.6196 -0.1252  0.0000  0.0000  0.1086  1.1040 </code></pre>
 </div>
 </div>
-<p>i.5 predictors used for the model: “Outstate” “S.F.Ratio” “Enroll” “Top10perc” “Top25perc”</p>
-<ol start="2" type="i">
-<li><p>11 terminal nodes</p></li>
-<li></li>
-</ol>
+<p>7 predictors used for the model: - “Outstate” - “S.F.Ratio” - “F.Undergrad” - “PhD” - “Room.Board” - “Top10perc” - “Top25perc”</p>
+<p>14 terminal nodes</p>
+</section>
+<section id="make-predictions-and-find-mses-for-training-and-testing-data" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-and-find-mses-for-training-and-testing-data">Make predictions and find MSE’s for training and testing data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>train_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_tree_model, <span class="at">data =</span> C.train)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>train_residuals <span class="ot">&lt;-</span> C.train<span class="sc">$</span>Expend <span class="sc">-</span> train_predictions</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(train_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>train_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_tree_model, <span class="at">data =</span> C.train)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>train_residuals <span class="ot">&lt;-</span> C.train<span class="sc">$</span>Expend <span class="sc">-</span> train_predictions</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(train_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.04187042</code></pre>
 </div>
 </div>
-<p>Training MSE: 0.04187042</p>
-<ol start="4" type="i">
-<li></li>
-</ol>
+<p>Training MSE: 0.0148%</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.test<span class="sc">$</span>Private)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_tree_model, <span class="at">newdata =</span> C.test)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>mse_test <span class="ot">&lt;-</span> <span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>mse_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.test<span class="sc">$</span>Private)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_tree_model, <span class="at">newdata =</span> C.test)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>mse_test <span class="ot">&lt;-</span> <span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>mse_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.04207581</code></pre>
 </div>
 </div>
-<p>Testing MSE: 0.04207581</p>
+<p>Testing MSE: 0.0146%</p>
 </section>
-<section id="c" class="level1">
-<h1>C</h1>
+<section id="find-the-optimal-size" class="level2">
+<h2 class="anchored" data-anchor-id="find-the-optimal-size">Find the optimal size</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>cv_tree_2 <span class="ot">&lt;-</span> <span class="fu">cv.tree</span>(log_tree_model)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv_tree_2<span class="sc">$</span>size, cv_tree_2<span class="sc">$</span>dev, <span class="at">type =</span> <span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cv_tree_2 <span class="ot">&lt;-</span> <span class="fu">cv.tree</span>(log_tree_model)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv_tree_2<span class="sc">$</span>size, cv_tree_2<span class="sc">$</span>dev, <span class="at">type =</span> <span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-project_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Optimal size: 14</p>
+</section>
+<section id="plot-the-pruned-tree-model" class="level2">
+<h2 class="anchored" data-anchor-id="plot-the-pruned-tree-model">Plot the pruned tree model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>prune_log_model <span class="ot">&lt;-</span> <span class="fu">prune.tree</span>(log_tree_model, <span class="at">best =</span> <span class="dv">14</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in prune.tree(log_tree_model, best = 14): best is bigger than tree size</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>))  </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune_log_model, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune_log_model, <span class="at">pretty =</span> <span class="dv">10</span>, <span class="at">cex =</span> <span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -444,78 +456,51 @@ Distribution of residuals:
 </div>
 </div>
 </div>
-<p>Size of pruned tree: 14</p>
 </section>
-<section id="d" class="level1">
-<h1>D</h1>
+<section id="find-predictions-and-mses" class="level2">
+<h2 class="anchored" data-anchor-id="find-predictions-and-mses">Find predictions and MSE’s</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot pruned tree model</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>prune_log_model <span class="ot">&lt;-</span> <span class="fu">prune.tree</span>(log_tree_model, <span class="at">best =</span> <span class="dv">14</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in prune.tree(log_tree_model, best = 14): best is bigger than tree size</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prune_log_model)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(prune_log_model, <span class="at">pretty =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Training MSE of pruned tree</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>train_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_log_model, <span class="at">data =</span> C.train)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>train_residuals <span class="ot">&lt;-</span> C.train<span class="sc">$</span>Expend <span class="sc">-</span> train_predictions</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(train_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>train_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_log_model, <span class="at">data =</span> C.train)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>train_residuals <span class="ot">&lt;-</span> C.train<span class="sc">$</span>Expend <span class="sc">-</span> train_predictions</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(train_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.04187042</code></pre>
 </div>
 </div>
-<p>Training MSE of pruned tree model: 0.04187042</p>
-</section>
-<section id="e-1" class="level1">
-<h1>E</h1>
+<p>Training MSE of pruned tree model: 0.0144%</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Predict log(Expend) with testing data</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_log_model, <span class="at">newdata =</span> C.test)</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>test_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(prune_log_model, <span class="at">newdata =</span> C.test)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.04207581</code></pre>
 </div>
 </div>
-<p>Testing MSE: 0.04207581</p>
-</section>
-<section id="f" class="level1">
-<h1>F</h1>
+<p>Testing MSE: 0.0146%</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(train_predictions, C.train<span class="sc">$</span>Expend))<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(train_predictions, C.train<span class="sc">$</span>Expend))<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.751356</code></pre>
 </div>
 </div>
 <p>The r squared of the training data of 75.14%</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test_predictions, C.test<span class="sc">$</span>Expend))<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test_predictions, C.test<span class="sc">$</span>Expend))<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7460448</code></pre>
 </div>
 </div>
 <p>The r squared of the testing data is 74.6%</p>
+<p>Both R^2 values are decently high, so around 75% of the variation in the data is explained by the model.</p>
 </section>
-<section id="section-1" class="level1">
-<h1>3</h1>
-</section>
-<section id="a-1" class="level1">
-<h1>A</h1>
+<section id="now-well-create-a-bagging-model" class="level2">
+<h2 class="anchored" data-anchor-id="now-well-create-a-bagging-model">Now, we’ll create a bagging model</h2>
+<p>Bagging involves training multiple copies of the same model on different subsets of the data, and this helps to reduce overfitting, it makes the model more robust, and it can give a more stable and accurate prediction than a single model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">705780612</span>)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a bagging model</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.train<span class="sc">$</span>Private)</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>bagging <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">17</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>bagging</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>C.train<span class="sc">$</span>Private <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(C.train<span class="sc">$</span>Private)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>bagging <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">17</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>) <span class="co"># mtrry = 17 because that is the total number of features</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>bagging</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -524,75 +509,76 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 17
 
-        OOB estimate of  error rate: 0.81%
+        OOB estimate of  error rate: 0.67%
 Confusion matrix:
      No  Yes class.error
-No  496   11 0.021696252
-Yes   6 1587 0.003766478</code></pre>
+No  498    9 0.017751479
+Yes   5 1588 0.003138732</code></pre>
 </div>
 </div>
-<section id="i.-2" class="level2">
-<h2 class="anchored" data-anchor-id="i.-2">i.</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                   No      Yes MeanDecreaseAccuracy MeanDecreaseGini
-Apps         7.996776 14.63382             16.29653         7.852547
-Accept      16.440909 16.77159             22.45017        18.458509
-Enroll       9.946075 10.29376             13.71551         9.608839
-Top10perc   24.656129 22.80333             29.19540        15.902975
-Top25perc   21.502638 25.66150             27.33541        13.640813
-F.Undergrad 81.217340 78.50145            105.98728       387.934372
-P.Undergrad 22.044252 34.70942             34.37470        28.152861
-Outstate    94.639180 97.70798            137.65480       200.661968
-Room.Board  14.147645 38.00999             39.62783        15.609351
-Books       15.064323 21.26806             20.72064         5.125512
-Personal    11.723063 15.97299             18.08786         3.527622
-PhD         20.798156 18.54041             24.07538        13.790794
-Terminal    38.247797 23.37693             38.82201        19.796038
-S.F.Ratio   13.228533 15.97735             18.68794         5.975525
-perc.alumni 26.961270 18.60419             29.63970         7.436632
-Grad.Rate   18.230071 14.98763             20.89308         8.983862
-Expend      10.470543 15.27206             17.96734         5.633619</code></pre>
+Apps         7.150819 14.41445             14.90384         7.321799
+Accept      14.522374 15.68410             20.86226        18.216586
+Enroll       9.302385 11.10371             14.09062         9.824299
+Top10perc   24.896203 21.10477             27.42748        14.821269
+Top25perc   21.360739 26.07698             26.53676        14.772428
+F.Undergrad 79.770776 74.77521            111.07985       379.391490
+P.Undergrad 21.144146 36.01142             33.76705        28.318235
+Outstate    96.825397 99.07068            133.88093       210.100275
+Room.Board  14.409165 36.61628             37.74531        16.282566
+Books       14.510306 21.76875             21.08725         5.435088
+Personal    10.079723 15.52761             16.73388         3.675347
+PhD         22.107278 19.47482             26.88305        14.680158
+Terminal    36.187643 24.12532             40.60947        19.099854
+S.F.Ratio   14.633135 16.63305             19.78574         6.582126
+perc.alumni 25.413291 18.71552             28.23599         7.142642
+Grad.Rate   17.076210 15.63929             19.98084         8.486667
+Expend       9.248024 15.76433             17.35448         6.377506</code></pre>
 </div>
 </div>
-</section>
-<section id="ii.-1" class="level2">
-<h2 class="anchored" data-anchor-id="ii.-1">ii.</h2>
+<ul>
+<li>In the first 2 columns, higher values reveal that the variable was more useful in differentiating between “No” (not private) and “Yes” (private).</li>
+<li>MeanDecreaseAccuracy quantifies how much the model’s accuracy decreases when the values of a specific variable are made “less useful” while keeping all other variables the same. Books has a lower MeanDecreaseAccuracy (21.09), so it’s less critical for accurate predictions.</li>
+<li>Variables with a higher MeanDecreaseGini are more important for splitting the data into homogenous groups such as distinguishing between private and not-private. F.Undergrad (379.39) is key for keeping the nodes pure in the trees.</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variable importance</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variable importance</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-project_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The most importance variables is “Outstate”.</p>
+<p>From the plot, the most important variable is “Outstate” based on MeanDecreaseAccuracy.</p>
 </section>
-<section id="iii.-1" class="level2">
-<h2 class="anchored" data-anchor-id="iii.-1">iii.</h2>
+<section id="make-predictions-and-find-the-mcr" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-and-find-the-mcr">Make predictions and find the MCR</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Report testing MCR</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(bagging, <span class="at">newdata =</span> C.test)</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Private  </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>misclassification_rate <span class="ot">&lt;-</span> <span class="fu">mean</span>(predictions <span class="sc">!=</span> actual)</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>misclassification_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Report testing MCR</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(bagging, <span class="at">newdata =</span> C.test)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Private  </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>misclassification_rate <span class="ot">&lt;-</span> <span class="fu">mean</span>(predictions <span class="sc">!=</span> actual)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>misclassification_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.001111111</code></pre>
 </div>
 </div>
 <p>The testing MCR is 0.11%</p>
 </section>
-</section>
-<section id="b.-1" class="level1">
-<h1>B.</h1>
+<section id="create-a-random-forest-model-on-the-response-variable-private-with-mtry-4-less-features-than-bagging" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-random-forest-model-on-the-response-variable-private-with-mtry-4-less-features-than-bagging">Create a random forest model on the response variable “Private” with mtry = 4 (less features than bagging)</h2>
+<p>In Bagging, each tree would consider all features to choose the best split at each node. In Random Forests, each tree only considers a random subset of features at each split, leading to extra randomness. This randomness makes the trees different and reduces correlation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a random forest model with mtry = 4</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">4</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Private <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">4</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -608,26 +594,26 @@ No  498    9 0.017751479
 Yes   3 1590 0.001883239</code></pre>
 </div>
 </div>
+</section>
+<section id="make-predictions-and-find-the-mcr-1" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-and-find-the-mcr-1">Make predictions and find the MCR</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Report testing MCR</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>predictions<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf, <span class="at">newdata =</span> C.test)</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>misclassification_rate <span class="ot">&lt;-</span> <span class="fu">mean</span>(predictions<span class="fl">.2</span> <span class="sc">!=</span> C.test<span class="sc">$</span>Private)</span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>misclassification_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Report testing MCR</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>predictions<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf, <span class="at">newdata =</span> C.test)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>misclassification_rate <span class="ot">&lt;-</span> <span class="fu">mean</span>(predictions<span class="fl">.2</span> <span class="sc">!=</span> C.test<span class="sc">$</span>Private)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>misclassification_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.003333333</code></pre>
 </div>
 </div>
 <p>The testing MCR is 0.33%</p>
 </section>
-<section id="section-2" class="level1">
-<h1>4</h1>
-</section>
-<section id="a.-1" class="level1">
-<h1>A.</h1>
+<section id="try-out-a-bagging-model-on-the-expend-response-variable" class="level2">
+<h2 class="anchored" data-anchor-id="try-out-a-bagging-model-on-the-expend-response-variable">Try out a bagging model on the “Expend” response variable</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a bagging model to predict logExpend</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>log_bagging <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Expend <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">17</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>log_bagging</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>log_bagging <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(Expend <span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">17</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>log_bagging</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -636,75 +622,66 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 17
 
-          Mean of squared residuals: 0.003817121
-                    % Var explained: 97.73</code></pre>
+          Mean of squared residuals: 0.003716069
+                    % Var explained: 97.79</code></pre>
 </div>
 </div>
-<section id="i.-3" class="level2">
-<h2 class="anchored" data-anchor-id="i.-3">i.</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Report important variables</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(log_bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(log_bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              %IncMSE IncNodePurity
-Private       7.85475     0.1365468
-Apps         29.29824     4.1939672
-Accept       17.38036     2.9655459
-Enroll       30.21717     3.5845051
-Top10perc    70.60875    28.9734666
-Top25perc    22.16605     7.2507768
-F.Undergrad  27.89312     3.6979415
-P.Undergrad  59.33170     7.0736315
-Outstate    120.41569   193.0642281
-Room.Board   32.13347    10.0754965
-Books        40.52761     3.8407706
-Personal     42.15975     4.6976768
-PhD          49.44477    14.2506218
-Terminal     38.25795     7.3654831
-S.F.Ratio   138.11138    51.6618400
-perc.alumni  47.62025     5.4791384
-Grad.Rate    25.96474     4.8544786</code></pre>
+<pre><code>               %IncMSE IncNodePurity
+Private       7.010438     0.1513677
+Apps         29.972199     3.9449379
+Accept       22.662350     3.0799850
+Enroll       26.111518     3.5902980
+Top10perc    69.167323    28.7649012
+Top25perc    23.935746     7.5878241
+F.Undergrad  29.544402     3.4305256
+P.Undergrad  60.989019     6.8355690
+Outstate    130.163262   192.1074146
+Room.Board   33.336093    10.0973513
+Books        39.603263     3.7910810
+Personal     43.951925     4.6812399
+PhD          51.789758    14.4131545
+Terminal     37.400131     7.5715491
+S.F.Ratio   134.649010    52.4663203
+perc.alumni  46.988899     5.4711661
+Grad.Rate    27.815089     4.6038497</code></pre>
 </div>
 </div>
-</section>
-<section id="ii.-2" class="level2">
-<h2 class="anchored" data-anchor-id="ii.-2">ii.</h2>
+<p>The importance plot looks a little different here because of the nature of the response variable “expend”. ‘Outstate’ (126.625) and student-faculty ratio ‘S.F.Ratio’ (134.729) have the highest %IncMSE, showing that they significantly reduce prediction error. These variables also have high IncNodePurity, showing they contribute heavily to reducing node variance.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variable importance</span></span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(log_bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variable importance</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(log_bagging)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-project_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The most importance predictor based on %IncMSE is S.F ratio</p>
+<p>S.F ratio is the most important in terms of impacting the MSe and Outstate reduces node variance the most.</p>
 </section>
-<section id="iii.-2" class="level2">
-<h2 class="anchored" data-anchor-id="iii.-2">iii.</h2>
+<section id="make-predictions-and-find-mse" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-and-find-mse">Make predictions and find MSE</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict log(Expend) with testing data </span></span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>test_predictions<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_bagging, <span class="at">newdata =</span> C.test)</span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions<span class="fl">.2</span></span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>test_predictions<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_bagging, <span class="at">newdata =</span> C.test)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>test_residuals <span class="ot">&lt;-</span> C.test<span class="sc">$</span>Expend <span class="sc">-</span> test_predictions<span class="fl">.2</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(test_residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.002179744</code></pre>
+<pre><code>[1] 0.002340102</code></pre>
 </div>
 </div>
-<p>The testing MSE 0.218%</p>
+<p>The testing MSE 0.0000923%</p>
+<p>The R squared of the model is 97.73%. So almost 98% of the variation in the data is explained by the model!</p>
 </section>
-<section id="iv.-1" class="level2">
-<h2 class="anchored" data-anchor-id="iv.-1">iv.</h2>
-<p>The R squared of the model is 97.73%</p>
-</section>
-</section>
-<section id="b-1" class="level1">
-<h1>B</h1>
+<section id="test-a-random-forest-with-the-response-expend" class="level2">
+<h2 class="anchored" data-anchor-id="test-a-random-forest-with-the-response-expend">Test a random forest with the response “Expend”</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>log_bagging_4 <span class="ot">&lt;-</span><span class="fu">randomForest</span>(Expend<span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">4</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>log_bagging_4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>log_bagging_4 <span class="ot">&lt;-</span><span class="fu">randomForest</span>(Expend<span class="sc">~</span>., <span class="at">data =</span> C.train, <span class="at">mtry =</span> <span class="dv">4</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>log_bagging_4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -713,35 +690,32 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 4
 
-          Mean of squared residuals: 0.003541376
-                    % Var explained: 97.9</code></pre>
+          Mean of squared residuals: 0.00359694
+                    % Var explained: 97.86</code></pre>
 </div>
 </div>
+</section>
+<section id="make-predictions-and-find-the-mse" class="level2">
+<h2 class="anchored" data-anchor-id="make-predictions-and-find-the-mse">Make predictions and find the MSE</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>predictions<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_bagging_4, <span class="at">newdata =</span> C.test)</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>((predictions<span class="fl">.3</span> <span class="sc">-</span> C.test<span class="sc">$</span>Expend)<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>predictions<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">predict</span>(log_bagging_4, <span class="at">newdata =</span> C.test)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>((predictions<span class="fl">.3</span> <span class="sc">-</span> C.test<span class="sc">$</span>Expend)<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.002079963</code></pre>
+<pre><code>[1] 0.002163567</code></pre>
 </div>
 </div>
-<p>The MCR is 0.21%</p>
-</section>
-<section id="c-1" class="level1">
-<h1>C</h1>
-<p>The R squared is 97.9%</p>
-</section>
-<section id="d.-1" class="level1">
-<h1>D.</h1>
+<p>The MSE is 0.0000870%</p>
+<p>The R squared is 97.7%</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>pred <span class="ot">&lt;-</span> predictions<span class="fl">.3</span></span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C.test,<span class="fu">aes</span>(<span class="at">x =</span> Expend, <span class="at">y =</span> predictions<span class="fl">.3</span>))<span class="sc">+</span><span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)<span class="sc">+</span> <span class="co"># Scatter plot</span></span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span> <span class="co"># 45-degree line</span></span>
-<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Actual vs Predicted log(Expend)"</span>,<span class="at">x =</span> <span class="st">"Actual log(Expend)"</span>,<span class="at">y =</span> <span class="st">"Predicted log(Expend)"</span>)<span class="sc">+</span></span>
-<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>C.test<span class="sc">$</span>pred <span class="ot">&lt;-</span> predictions<span class="fl">.3</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C.test,<span class="fu">aes</span>(<span class="at">x =</span> Expend, <span class="at">y =</span> predictions<span class="fl">.3</span>))<span class="sc">+</span><span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)<span class="sc">+</span> <span class="co"># Scatter plot</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span> <span class="co"># 45-degree line</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Actual vs Predicted log(Expend)"</span>,<span class="at">x =</span> <span class="st">"Actual log(Expend)"</span>,<span class="at">y =</span> <span class="st">"Predicted log(Expend)"</span>)<span class="sc">+</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01-project_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="01-project_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
