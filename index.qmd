@@ -4,6 +4,8 @@ about:
   template: trestles
   image: profile.jpg
   links:
+    - text: Resume
+      url: "cv.pdf"
     - icon: github
       text: Github
       href: https://github.com/fathima877
@@ -12,14 +14,11 @@ about:
     - text: Email
       url: "mailto:fathima.shaikh458@gmail.com"
       icon: inbox-fill
-    - text: Resume
-      url: "Resume.pdf"
-      
 toc: false
 ---
 ## About
 
-Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She's completed all required courses, and relevant courses can be viewed in "Courses". Additionally, she has diverse internship experiences which can be viewed in "Resume". Most importantly, she's passionate about creating machine learning models, which can be viewed in "Projects". 
+Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She's completed all required courses, and relevant courses can be viewed in "Courses". Additionally, she has diverse internship experiences which can be viewed in "Resume". Most importantly, she's passionate about using machine learning techniques, which can be viewed in "Projects". 
 
 ## Education
 
