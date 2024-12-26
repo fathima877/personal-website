@@ -4,28 +4,28 @@
     "href": "index.html",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “CV”. Lastly, she passionate in creating machine learning models, which can be viewed in “Projects”."
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She’s completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “Resume”. Most importantly, she’s passionate about creating machine learning models, which can be viewed in “Projects”."
   },
   {
     "objectID": "index.html#about",
     "href": "index.html#about",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She has completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “CV”. Lastly, she passionate in creating machine learning models, which can be viewed in “Projects”."
+    "text": "Fathima Shaikh is a 4th year undergraduate at UCLA studying Statistics and Data Science. She’s completed all required courses, and relevant courses can be viewed in “Courses”. Additionally, she has diverse internship experiences which can be viewed in “Resume”. Most importantly, she’s passionate about creating machine learning models, which can be viewed in “Projects”."
   },
   {
     "objectID": "index.html#education",
     "href": "index.html#education",
     "title": "Fathima Shaikh",
     "section": "Education",
-    "text": "Education\nUniversity of California, Los Angeles | B.S in Statistics and Data Science | Sept 2021 - June 2025"
+    "text": "Education\nUniversity of California, Los Angeles | B.S in Statistics and Data Science | Sept. 2021 - Jun. 2025"
   },
   {
     "objectID": "index.html#notable-experiences",
     "href": "index.html#notable-experiences",
     "title": "Fathima Shaikh",
     "section": "Notable Experiences",
-    "text": "Notable Experiences\nGeneral Motors | Digital Enablement Intern | Jun. - Aug. 2024 | Detroit, MI"
+    "text": "Notable Experiences\nGeneral Motors | Digital Enablement Intern | Jun. - Aug. 2024 | Detroit, MI Launch Pop, LLC | Product Management Intern | Jul. - Sept. 2022 | Remote"
   },
   {
     "objectID": "projects/2-project.html",
@@ -242,7 +242,7 @@
     "href": "projects.html",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Title\n\n\nSubtitle\n\n\n\n\n\n\nCollege Expense Prediction (Code Displayed and Interpreted)\n\n\nThis project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best.\n\n\n\n\nBirth Weight Predictions (Code Displayed and Interpreted)\n\n\nThis is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby’s weight at birth.\n\n\n\n\nExploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen\n\n\nThis is the code for a group project I completed with my Statistical Consulting class. We used drone data from The Guardian that detailed the type of attack and the number of casualties in Yemen from 2002 - present. We formed 3 hypothesis relating to presidential administrations, death vs strike count, and location. In this report, I display the graphs my group and I used and what we learned from them.\n\n\n\n\n\nNo matching items"
+    "text": "Title\n\n\nSubtitle\n\n\n\n\n\n\nCollege Expense Prediction (Code Displayed and Interpreted)\n\n\nThis project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. I used tree plots, bagging models, and random forest models. Also, I discuss what I learned from the model outputs.\n\n\n\n\nBirth Weight Predictions (Code Displayed and Interpreted)\n\n\nThis is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby’s weight at birth.\n\n\n\n\nExploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen\n\n\nThis is the code for a group project I completed with my Statistical Consulting class. We used drone data from The Guardian that detailed the type of attack and the number of casualties in Yemen from 2002 - present. We formed 3 hypothesis relating to presidential administrations, death vs strike count, and location. In this report, I display the graphs my group and I used and what we learned from them.\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/01-project.html#now-well-create-a-bagging-model",

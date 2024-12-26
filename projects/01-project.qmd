@@ -1,6 +1,7 @@
 ---
 title: College Expense Prediction (Code Displayed and Interpreted) 
-subtitle: This project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. 
+subtitle: This project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. I used tree plots, bagging models, and random forest models. Also, I discuss what I learned from the model outputs.
+
 images: image/college-expense.jpeg
 toc: false
 ---
