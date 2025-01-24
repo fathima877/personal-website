@@ -4,8 +4,6 @@ about:
   template: trestles
   image: profile.jpg
   links:
-    - text: Resume
-      url: "Resume_FathimaShaikh.pdf"
     - icon: github
       text: Github
       href: https://github.com/fathima877
@@ -14,6 +12,8 @@ about:
     - text: Email
       url: "mailto:fathima.shaikh458@gmail.com"
       icon: inbox-fill
+    - text: Resume
+      url: "Resume_FathimaShaikh.pdf"
 toc: false
 ---
 ## About
