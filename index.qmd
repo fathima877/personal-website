@@ -13,7 +13,7 @@ about:
       url: "mailto:fathima.shaikh458@gmail.com"
       icon: inbox-fill
     - text: Resume
-      url: "Resume_FathimaShaikh.pdf"
+      url: "cv.pdf"
 toc: false
 ---
 ## About
