@@ -151,7 +151,7 @@
     "href": "courses.html",
     "title": "Relevant Courses Taken",
     "section": "",
-    "text": "All classes are introductory classes\n\nBootstrapping\nMonte Carlo Methods\nData Mining\nMachine Learning Models\nStatistical Modeling\nStatistical Principles\nAdvanced Probability and Statistics"
+    "text": "Bootstrapping\nMonte Carlo Methods\nData Mining\nMachine Learning Models\nStatistical Modeling\nStatistical Principles\nAdvanced Probability and Statistics"
   },
   {
     "objectID": "projects/01-project.html",
@@ -242,7 +242,7 @@
     "href": "projects.html",
     "title": "Fathima Shaikh",
     "section": "",
-    "text": "Title\n\n\nSubtitle\n\n\n\n\n\n\nCollege Expense Prediction (Code Displayed and Interpreted)\n\n\nThis project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. I used tree plots, bagging models, and random forest models. Also, I discuss what I learned from the model outputs.\n\n\n\n\nBirth Weight Predictions (Code Displayed and Interpreted)\n\n\nThis is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby’s weight at birth.\n\n\n\n\nExploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen\n\n\nThis is the code for a group project I completed with my Statistical Consulting class. We used drone data from The Guardian that detailed the type of attack and the number of casualties in Yemen from 2002 - present. We formed 3 hypothesis relating to presidential administrations, death vs strike count, and location. In this report, I display the graphs my group and I used and what we learned from them.\n\n\n\n\n\nNo matching items"
+    "text": "Title\n\n\nSubtitle\n\n\n\n\n\n\nCollege Expense Prediction (Code Displayed and Interpreted)\n\n\nThis project predicts yearly US college attendance costs and if the school is private or not using factors like out-of-state enrollment, and student population, with a random forest model performing best. I used tree plots, bagging models, and random forest models. Also, I discuss what I learned from the model outputs.\n\n\n\n\nBirth Weight Predictions (Code Displayed and Interpreted)\n\n\nThis is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby’s weight at birth. Like the 1st project, I show the code to lasso, ridge regression, PCR, and PLS models I implemented and what I learned from them. I also include some definitions to terms.\n\n\n\n\nExploratory Data Analysis and Data Visualization on US Military Airstrikes in Yemen\n\n\nThis is the code for a group project I completed with my Statistical Consulting class. We used drone data from The Guardian that detailed the type of attack and the number of casualties in Yemen from 2002 - present. We formed 3 hypothesis relating to presidential administrations, death vs strike count, and location. In this report, I display the graphs my group and I used and what we learned from them.\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/01-project.html#now-well-create-a-bagging-model",

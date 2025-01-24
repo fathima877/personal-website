@@ -1,6 +1,6 @@
 ---
 title: Birth Weight Predictions (Code Displayed and Interpreted)
-subtitle: This is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby's weight at birth.
+subtitle: This is a dataset from the North Carolina State Center for Health Statistics. It consists of variables related to the baby, parents, and hospital. This project aims to find out which machine learning model, and which predictors can help predict a baby's weight at birth. Like the 1st project, I show the code to lasso, ridge regression, PCR, and PLS models I implemented and what I learned from them. I also include some definitions to terms. 
 
 toc: false
 ---

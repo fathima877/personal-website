@@ -2,8 +2,6 @@
 title: Relevant Courses Taken
 
 ---
-All classes are introductory classes
-
 - Bootstrapping
 - Monte Carlo Methods
 - Data Mining
