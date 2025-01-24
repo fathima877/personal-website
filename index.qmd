@@ -5,7 +5,7 @@ about:
   image: profile.jpg
   links:
     - text: Resume
-      url: "Resume_FathimaShaikh .pdf"
+      url: "Resume_FathimaShaikh.pdf"
     - icon: github
       text: Github
       href: https://github.com/fathima877
